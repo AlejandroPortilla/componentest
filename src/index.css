@@ -1,11 +1,27 @@
 :root {
+  /* Fonts */
   font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
   font-weight: 400;
 
+  /* Palette (new but coherent with previous blues)
+     --primary: main accent for accents and borders
+     --secondary: complementary accent
+     --muted: text-muted
+     --bg: app background
+     --card: card background
+  */
+  --primary: #2b6cb0; /* deep blue */
+  --accent: #38b2ac;  /* teal accent */
+  --muted: #6b7280;
+  --bg: #f7fafc;
+  --card: rgba(255,255,255,0.96);
+  --glass: rgba(255,255,255,0.85);
+  --soft-border: rgba(43,108,176,0.08);
+
   color-scheme: light;
-  color: #2c3e50;
-  background-color: #ffffff;
+  color: #102a43;
+  background-color: var(--bg);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
