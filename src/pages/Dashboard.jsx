@@ -383,72 +383,73 @@ const Dashboard = () => {
         </div>
       )}
 
-      {isModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>Filtros para Gráficos</h2>
-            <div className="modal-buttons">
-              <input
-                type="text"
-                placeholder="Buscar filtros..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-              />
-              <button className="btn" onClick={() => {
-                guardarHistorial(selecciones);
-                setIsModalOpen(false);
-                // Navigate to reportes or apply filters there
-                window.location.href = '/reportes';
-              }}>
-                Aplicar en Reportes
-              </button>
-              <button className="btn" onClick={() => setIsModalOpen(false)}>
-                Cerrar
-              </button>
-            </div>
-            <div className="cards-container">
-              <section className="laboratorio-card">
-                <h2>Laboratorio</h2>
-                {Object.entries(filteredLaboratorios).map(([nombre, datos]) => (
-                  <TablaCategoria
-                    key={nombre}
-                    titulo={nombre}
-                    datos={datos}
-                    onChange={manejarSeleccion}
-                    preSeleccionados={selecciones[nombre] || []}
-                  />
-                ))}
-              </section>
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div className="modal-overlay" onClick={() => setIsModalOpen(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div className="modal-content" onClick={(e) => e.stopPropagation()} initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 12, opacity: 0 }} transition={{ duration: 0.2 }}>
+              <h2>Filtros para Gráficos</h2>
+              <div className="modal-buttons">
+                <input
+                  type="text"
+                  placeholder="Buscar filtros..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+                <button className="btn" onClick={() => {
+                  guardarHistorial(selecciones);
+                  setIsModalOpen(false);
+                  window.location.href = '/reportes';
+                }}>
+                  Aplicar en Reportes
+                </button>
+                <button className="btn" onClick={() => setIsModalOpen(false)}>
+                  Cerrar
+                </button>
+              </div>
+              <div className="cards-container">
+                <section className="laboratorio-card">
+                  <h2>Laboratorio</h2>
+                  {Object.entries(filteredLaboratorios).map(([nombre, datos]) => (
+                    <TablaCategoria
+                      key={nombre}
+                      titulo={nombre}
+                      datos={datos}
+                      onChange={manejarSeleccion}
+                      preSeleccionados={selecciones[nombre] || []}
+                    />
+                  ))}
+                </section>
 
-              <section className="laboratorio-card">
-                <h2>Clinicas</h2>
-                {Object.entries(filteredSignos).map(([nombre, datos]) => (
-                  <TablaCategoria
-                    key={nombre}
-                    titulo={nombre}
-                    datos={datos}
-                    onChange={manejarSeleccion}
-                    preSeleccionados={selecciones[nombre] || []}
-                  />
-                ))}
-              </section>
-              <section className="laboratorio-card">
-                <h2>Sociodemografica</h2>
-                {Object.entries(filteredSociodemograficas).map(([nombre, datos]) => (
-                  <TablaCategoria
-                    key={nombre}
-                    titulo={nombre}
-                    datos={datos}
-                    onChange={manejarSeleccion}
-                    preSeleccionados={selecciones[nombre] || []}
-                  />
-                ))}
-              </section>
-            </div>
-          </div>
-        </div>
-      )}
+                <section className="laboratorio-card">
+                  <h2>Clinicas</h2>
+                  {Object.entries(filteredSignos).map(([nombre, datos]) => (
+                    <TablaCategoria
+                      key={nombre}
+                      titulo={nombre}
+                      datos={datos}
+                      onChange={manejarSeleccion}
+                      preSeleccionados={selecciones[nombre] || []}
+                    />
+                  ))}
+                </section>
+                <section className="laboratorio-card">
+                  <h2>Sociodemografica</h2>
+                  {Object.entries(filteredSociodemograficas).map(([nombre, datos]) => (
+                    <TablaCategoria
+                      key={nombre}
+                      titulo={nombre}
+                      datos={datos}
+                      onChange={manejarSeleccion}
+                      preSeleccionados={selecciones[nombre] || []}
+                    />
+                  ))}
+                </section>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
