@@ -387,11 +387,96 @@ const Dashboard = () => {
         {isModalOpen && (
           <motion.div className="modal-overlay" onClick={() => setIsModalOpen(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <motion.div className="modal-content" onClick={(e) => e.stopPropagation()} initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 12, opacity: 0 }} transition={{ duration: 0.2 }}>
-              <h2>Filtros para Gráficos</h2>
 
-              <div style={{ marginTop: 8 }}>
-                <div style={{ fontSize: 13, color: '#6c757d' }}>Seleccionados</div>
-                <div className="chips-list">
+              <div className="modal-header">
+                <div className="modal-title">Filtros para Gráficos</div>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <button className="modal-close" onClick={() => { guardarHistorial(selecciones); setIsModalOpen(false); window.location.href = '/reportes'; }}>Aplicar</button>
+                  <button className="modal-close" onClick={() => setIsModalOpen(false)}>✕</button>
+                </div>
+              </div>
+
+              <div className="modal-left">
+                <input
+                  type="text"
+                  placeholder="Buscar filtros..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="modal-search"
+                />
+
+                <div style={{ display: 'grid', gap: 12 }}>
+                  <div>
+                    <h3 style={{ fontSize: 15, margin: '6px 0' }}>Laboratorio</h3>
+                    {Object.entries(filteredLaboratorios).map(([nombre, datos]) => (
+                      <details key={nombre} className="reportes-accordion">
+                        <summary>
+                          <span>{nombre}</span>
+                          <span className="details-count">{(selecciones[nombre] || []).length}</span>
+                        </summary>
+                        <div style={{ padding: 8 }}>
+                          <TablaCategoria
+                            titulo={nombre}
+                            datos={datos}
+                            onChange={manejarSeleccion}
+                            preSeleccionados={selecciones[nombre] || []}
+                            mode="grid"
+                            searchable={true}
+                          />
+                        </div>
+                      </details>
+                    ))}
+                  </div>
+
+                  <div>
+                    <h3 style={{ fontSize: 15, margin: '6px 0' }}>Clínicas</h3>
+                    {Object.entries(filteredSignos).map(([nombre, datos]) => (
+                      <details key={nombre} className="reportes-accordion">
+                        <summary>
+                          <span>{nombre}</span>
+                          <span className="details-count">{(selecciones[nombre] || []).length}</span>
+                        </summary>
+                        <div style={{ padding: 8 }}>
+                          <TablaCategoria
+                            titulo={nombre}
+                            datos={datos}
+                            onChange={manejarSeleccion}
+                            preSeleccionados={selecciones[nombre] || []}
+                            mode="grid"
+                            searchable={true}
+                          />
+                        </div>
+                      </details>
+                    ))}
+                  </div>
+
+                  <div>
+                    <h3 style={{ fontSize: 15, margin: '6px 0' }}>Sociodemografica</h3>
+                    {Object.entries(filteredSociodemograficas).map(([nombre, datos]) => (
+                      <details key={nombre} className="reportes-accordion">
+                        <summary>
+                          <span>{nombre}</span>
+                          <span className="details-count">{(selecciones[nombre] || []).length}</span>
+                        </summary>
+                        <div style={{ padding: 8 }}>
+                          <TablaCategoria
+                            titulo={nombre}
+                            datos={datos}
+                            onChange={manejarSeleccion}
+                            preSeleccionados={selecciones[nombre] || []}
+                            mode="grid"
+                            searchable={true}
+                          />
+                        </div>
+                      </details>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-right">
+                <div className="modal-selected-title">Seleccionados</div>
+                <div className="selected-box">
                   {Object.entries(selecciones).flatMap(([cat, items]) => items.map((it) => ({ cat, it }))).length === 0 ? (
                     <div style={{ color: '#6c757d' }}>Ninguno</div>
                   ) : (
@@ -403,78 +488,14 @@ const Dashboard = () => {
                     ))
                   )}
                 </div>
+
+                <div className="modal-actions">
+                  <button className="btn" onClick={() => { setSelecciones({}); }}>Limpiar</button>
+                  <button className="btn" onClick={() => { guardarHistorial(selecciones); setIsModalOpen(false); window.location.href = '/reportes'; }}>Aplicar en Reportes</button>
+                </div>
+
               </div>
 
-              <div className="modal-buttons" style={{ marginTop: 12 }}>
-                <input
-                  type="text"
-                  placeholder="Buscar filtros..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="search-input"
-                />
-                <button className="btn" onClick={() => {
-                  guardarHistorial(selecciones);
-                  setIsModalOpen(false);
-                  window.location.href = '/reportes';
-                }}>
-                  Aplicar en Reportes
-                </button>
-                <button className="btn" onClick={() => setIsModalOpen(false)}>
-                  Cerrar
-                </button>
-              </div>
-
-              <div className="cards-container" style={{ marginTop: 12 }}>
-                <section className="laboratorio-card">
-                  <h2>Laboratorio</h2>
-                  {Object.entries(filteredLaboratorios).map(([nombre, datos]) => (
-                    <TablaCategoria
-                      key={nombre}
-                      titulo={nombre}
-                      datos={datos}
-                      onChange={manejarSeleccion}
-                      preSeleccionados={selecciones[nombre] || []}
-                      mode="grid"
-                      searchable={true}
-                    />
-                  ))}
-                </section>
-
-                <section className="laboratorio-card">
-                  <h2>Clinicas</h2>
-                  {Object.entries(filteredSignos).map(([nombre, datos]) => (
-                    <TablaCategoria
-                      key={nombre}
-                      titulo={nombre}
-                      datos={datos}
-                      onChange={manejarSeleccion}
-                      preSeleccionados={selecciones[nombre] || []}
-                      mode="grid"
-                      searchable={true}
-                    />
-                  ))}
-                </section>
-                <section className="laboratorio-card">
-                  <h2>Sociodemografica</h2>
-                  {Object.entries(filteredSociodemograficas).map(([nombre, datos]) => (
-                    <TablaCategoria
-                      key={nombre}
-                      titulo={nombre}
-                      datos={datos}
-                      onChange={manejarSeleccion}
-                      preSeleccionados={selecciones[nombre] || []}
-                      mode="grid"
-                      searchable={true}
-                    />
-                  ))}
-                </section>
-              </div>
-
-              <div className="filters-footer">
-                <button className="btn" onClick={() => { setSelecciones({}); }}>Limpiar</button>
-                <button className="btn" onClick={() => { guardarHistorial(selecciones); setIsModalOpen(false); window.location.href = '/reportes'; }}>Aplicar en Reportes</button>
-              </div>
             </motion.div>
           </motion.div>
         )}
