@@ -357,6 +357,7 @@ details.reportes-accordion[open] {
 .modal-left {
   padding: 8px 4px 12px 4px;
   overflow-y: auto;
+  min-height: 0; /* allow internal scrolling inside grid */
 }
 
 .modal-right {
@@ -366,6 +367,25 @@ details.reportes-accordion[open] {
   flex-direction: column;
   gap: 12px;
   align-items: stretch;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Constrain inner accordion content to avoid expanding the modal
+   This ensures each accordion's body scrolls internally instead of growing the modal */
+.modal-left .reportes-accordion > div {
+  max-height: calc(80vh - 220px);
+  overflow-y: auto;
+}
+
+/* Small tweak: ensure grid items inside modal-left don't grow the container */
+.modal-left .cards-container, .modal-left > div {
+  display: block;
+}
+
+/* Smooth touch scrolling */
+.modal-left, .modal-right, .modal-left .reportes-accordion > div {
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-search {
