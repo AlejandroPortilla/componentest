@@ -223,6 +223,22 @@ h2 {
   gap: 8px;
   flex-wrap: wrap;
   margin: 12px 0;
+  max-height: 140px; /* limit height for selected chips */
+  overflow-y: auto;
+  position: relative;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chips-list::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 28px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0.95));
 }
 
 .chip {
