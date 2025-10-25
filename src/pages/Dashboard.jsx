@@ -115,6 +115,16 @@ const Dashboard = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
+  useEffect(() => {
+    // prevent background scrolling when modal is open
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isModalOpen]);
+
   const manejarSeleccion = (categoria, items) => {
     setSelecciones((prev) => ({ ...prev, [categoria]: items }));
   };
