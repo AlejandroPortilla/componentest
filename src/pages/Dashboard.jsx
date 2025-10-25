@@ -245,7 +245,7 @@ const Dashboard = () => {
 
                     <div className="chart-content">
                       <div id="chart-general-cases" className="chart-wrapper">
-                        <ResponsiveContainer width="100%" height={400}>
+                        <ResponsiveContainer width="100%" height={360}>
                           {renderChart(chartData, generalChartType)}
                         </ResponsiveContainer>
                       </div>
