@@ -400,6 +400,28 @@ details.reportes-accordion[open] {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Recharts: improve tick wrapping and typography */
+.recharts-wrapper text {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  fill: #334155;
+}
+
+.recharts-cartesian-axis-tick text {
+  font-size: 11px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.recharts-legend-item text {
+  font-size: 12px;
+}
+
+/* Make svg charts responsive inside card and avoid overflow */
+.chart-wrapper svg {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .modal-search {
   width: 100%;
   padding: 10px 12px;
