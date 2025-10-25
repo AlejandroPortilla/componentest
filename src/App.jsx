@@ -10,19 +10,16 @@ import Historial from './pages/Historial'
 import Reportes from './pages/Reportes'
 import Ayuda from './pages/Ayuda'
 
-function AppContent() {
-  const { isCollapsed } = React.useContext(require('./context/SidebarContext').default || { isCollapsed: false });
-  // Fallback above ensures no crash if context import resolution changes
-  const sidebarContext = require('./context/SidebarContext');
-  const sidebar = sidebarContext && sidebarContext.useSidebar ? sidebarContext.useSidebar() : { isCollapsed: false };
+import { useSidebar } from './context/SidebarContext'
 
-  const collapsed = sidebar.isCollapsed ?? isCollapsed ?? false;
+function AppContent() {
+  const { isCollapsed } = useSidebar();
 
   return (
     <div className="app">
       <Sidebar />
       <Navbar />
-      <main className={`main-content ${collapsed ? 'collapsed' : ''}`}>
+      <main className={`main-content ${isCollapsed ? 'collapsed' : ''}`}>
         <div className="content-wrapper">
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
