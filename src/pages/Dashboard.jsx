@@ -388,7 +388,24 @@ const Dashboard = () => {
           <motion.div className="modal-overlay" onClick={() => setIsModalOpen(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <motion.div className="modal-content" onClick={(e) => e.stopPropagation()} initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 12, opacity: 0 }} transition={{ duration: 0.2 }}>
               <h2>Filtros para Gráficos</h2>
-              <div className="modal-buttons">
+
+              <div style={{ marginTop: 8 }}>
+                <div style={{ fontSize: 13, color: '#6c757d' }}>Seleccionados</div>
+                <div className="chips-list">
+                  {Object.entries(selecciones).flatMap(([cat, items]) => items.map((it) => ({ cat, it }))).length === 0 ? (
+                    <div style={{ color: '#6c757d' }}>Ninguno</div>
+                  ) : (
+                    Object.entries(selecciones).flatMap(([cat, items]) => items.map((it) => ({ cat, it }))).map((s, idx) => (
+                      <div key={idx} className="chip">{s.it} <button className="remove" onClick={() => {
+                        const nuevos = (selecciones[s.cat] || []).filter(x => x !== s.it);
+                        setSelecciones(prev => ({ ...prev, [s.cat]: nuevos }));
+                      }}>✕</button></div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              <div className="modal-buttons" style={{ marginTop: 12 }}>
                 <input
                   type="text"
                   placeholder="Buscar filtros..."
@@ -407,7 +424,8 @@ const Dashboard = () => {
                   Cerrar
                 </button>
               </div>
-              <div className="cards-container">
+
+              <div className="cards-container" style={{ marginTop: 12 }}>
                 <section className="laboratorio-card">
                   <h2>Laboratorio</h2>
                   {Object.entries(filteredLaboratorios).map(([nombre, datos]) => (
@@ -417,6 +435,8 @@ const Dashboard = () => {
                       datos={datos}
                       onChange={manejarSeleccion}
                       preSeleccionados={selecciones[nombre] || []}
+                      mode="grid"
+                      searchable={true}
                     />
                   ))}
                 </section>
@@ -430,6 +450,8 @@ const Dashboard = () => {
                       datos={datos}
                       onChange={manejarSeleccion}
                       preSeleccionados={selecciones[nombre] || []}
+                      mode="grid"
+                      searchable={true}
                     />
                   ))}
                 </section>
@@ -442,9 +464,16 @@ const Dashboard = () => {
                       datos={datos}
                       onChange={manejarSeleccion}
                       preSeleccionados={selecciones[nombre] || []}
+                      mode="grid"
+                      searchable={true}
                     />
                   ))}
                 </section>
+              </div>
+
+              <div className="filters-footer">
+                <button className="btn" onClick={() => { setSelecciones({}); }}>Limpiar</button>
+                <button className="btn" onClick={() => { guardarHistorial(selecciones); setIsModalOpen(false); window.location.href = '/reportes'; }}>Aplicar en Reportes</button>
               </div>
             </motion.div>
           </motion.div>
