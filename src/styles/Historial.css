@@ -1,0 +1,68 @@
+.historial-container {
+  background-color: #d6eaf8; /* azul claro */
+  min-height: 100vh;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.titulo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2C5891;
+}
+
+.descripcion {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.lista-historiales {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.item-historial {
+  background: #fff;
+  border-radius: 10px;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.icono-texto {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f4e79;
+}
+
+.icono {
+  color: #1f4e79;
+  font-size: 20px;
+}
+
+.btn-cargar {
+  background: none;
+  border: none;
+  color: #1f4e79;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-cargar:hover {
+  text-decoration: underline;
+}
+
+.flecha {
+  font-size: 18px;
+}

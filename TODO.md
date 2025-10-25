@@ -1,0 +1,5 @@
+- [ ] Modificar src/pages/Dashboard.jsx para agregar gráficos separados por categoría
+  - [ ] Definir mapeo de subcategorías a categorías principales
+  - [ ] Extraer la función renderChart fuera del componente para reutilización
+  - [ ] Agregar lógica en el return para renderizar gráficos por cada categoría principal que tenga selecciones
+  - [ ] Actualizar chartTypes para manejar tipos de gráfico por categoría
