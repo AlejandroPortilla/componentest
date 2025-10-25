@@ -82,22 +82,25 @@ h2 {
 /* Botón */
 .btn {
   display: block;
-  width: 100%; 
-  padding: 10px 20px; 
+  width: 100%;
+  padding: 10px 20px;
   margin: 20px 0 0 0;
   border: none;
   background-color: #759CFF;
   color: white;
   cursor: pointer;
-  border-radius: 5px;
-  transition: 0.3s;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   text-align: center;
   width: 90%;
   max-width: 400px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .btn:hover {
   background-color: #3498db;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
 }
 
 /* Laboratorio Card */
