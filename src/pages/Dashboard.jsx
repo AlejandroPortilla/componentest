@@ -194,7 +194,7 @@ const Dashboard = () => {
 
       {/* New section for general cases and summary */}
       {startDate && endDate && (
-        <div className="charts-container">
+        <motion.div className="charts-container" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
           <h2>Casos Reportados en General</h2>
           {(() => {
             let chartData = [];
@@ -219,7 +219,7 @@ const Dashboard = () => {
             return (
               <div className="general-cases-section">
                 <div className="general-cases-right">
-                  <div className="chart-card">
+                  <motion.div className="chart-card" initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0.15 }}>
                     <div className="chart-header">
                       <h3>{title}</h3>
                       <div className="chart-controls">
@@ -237,7 +237,7 @@ const Dashboard = () => {
                         </ResponsiveContainer>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
 
                 </div>
               </div>
@@ -245,7 +245,7 @@ const Dashboard = () => {
 
             );
           })()}
-        </div>
+        </motion.div>
       )}
 
       {/* Gráficos separados por categoría principal */}
