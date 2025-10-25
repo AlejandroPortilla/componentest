@@ -34,6 +34,7 @@ const renderChart = (data, chartType) => {
 
   switch (chartType) {
     case 'pie': {
+      // compact pie settings: smaller radii, percentage-only labels, spaced slices
       return (
         <PieChart>
           <Pie
@@ -41,18 +42,19 @@ const renderChart = (data, chartType) => {
             cx="50%"
             cy="50%"
             labelLine={false}
-            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-            outerRadius={90}
-            innerRadius={40}
-            fill="#8884d8"
+            // show only percentage inside slices to avoid overflow
+            label={({ percent }) => `${Math.round(percent * 100)}%`}
+            outerRadius={60}
+            innerRadius={30}
+            paddingAngle={3}
             dataKey="value"
           >
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
-          <Tooltip />
-          <Legend layout="horizontal" verticalAlign="bottom" />
+          <Tooltip formatter={(value, name) => [value, name]} />
+          <Legend layout="horizontal" verticalAlign="bottom" formatter={(value) => (typeof value === 'string' && value.length > 20 ? value.slice(0, 17) + '…' : value)} />
         </PieChart>
       );
     }
