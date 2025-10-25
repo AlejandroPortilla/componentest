@@ -29,7 +29,8 @@ const categoriaPrincipalMap = {
 
 // Función para renderizar gráfico
 const renderChart = (data, chartType) => {
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82ca9d', '#ffc658', '#ff7c7c'];
+  // Palette tuned to CSS variables (fallback hex values)
+  const COLORS = ['#2b6cb0', '#38b2ac', '#81c2ff', '#ffd080', '#7b8bf6', '#82ca9d', '#ffc658', '#ff7c7c'];
 
   switch (chartType) {
     case 'pie': {
@@ -41,7 +42,8 @@ const renderChart = (data, chartType) => {
             cy="50%"
             labelLine={false}
             label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-            outerRadius={120}
+            outerRadius={90}
+            innerRadius={40}
             fill="#8884d8"
             dataKey="value"
           >
@@ -50,56 +52,57 @@ const renderChart = (data, chartType) => {
             ))}
           </Pie>
           <Tooltip />
+          <Legend layout="horizontal" verticalAlign="bottom" />
         </PieChart>
       );
     }
     case 'line': {
       return (
-        <LineChart data={data}>
+        <LineChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 30 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="name"
-            angle={-45}
-            textAnchor="end"
-            height={150}
+            angle={data.length > 4 ? -35 : -10}
+            textAnchor={data.length > 4 ? "end" : "middle"}
+            height={data.length > 4 ? 90 : 60}
             interval={0}
-            fontSize={12}
+            tick={{ fontSize: 12, fill: '#334155' }}
           />
-          <YAxis />
+          <YAxis tick={{ fontSize: 12 }} />
           <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} />
+          <Legend verticalAlign="top" />
+          <Line type="monotone" dataKey="value" stroke={COLORS[0]} strokeWidth={2.2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
         </LineChart>
       );
     }
 
     default:
       return (
-        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+        <BarChart data={data} margin={{ top: 8, right: 12, left: 0, bottom: 40 }} barCategoryGap="20%">
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="name"
-            fontSize={14}
+            tick={{ fontSize: 12, fill: '#334155' }}
             interval={0}
-            angle={data.length > 3 ? -45 : 0}
-            textAnchor={data.length > 3 ? "end" : "middle"}
-            height={data.length > 3 ? 100 : 60}
+            angle={data.length > 4 ? -35 : 0}
+            textAnchor={data.length > 4 ? "end" : "middle"}
+            height={data.length > 4 ? 80 : 50}
           />
-          <YAxis fontSize={14} />
+          <YAxis tick={{ fontSize: 12 }} />
           <Tooltip
             contentStyle={{
-              backgroundColor: '#fff',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              fontSize: '14px'
+              backgroundColor: 'var(--card)',
+              border: '1px solid rgba(2,6,23,0.06)',
+              borderRadius: '6px',
+              fontSize: '13px'
             }}
           />
           <Legend />
           <Bar
             dataKey="value"
-            fill="#8884d8"
-            radius={[4, 4, 0, 0]}
-            barSize={data.length === 1 ? 200 : data.length === 2 ? 150 : data.length === 3 ? 100 : 60}
+            fill={COLORS[1]}
+            radius={[6, 6, 4, 4]}
+            barSize={Math.max(40, Math.min(100, Math.floor(600 / Math.max(1, data.length))))}
           />
         </BarChart>
       );
