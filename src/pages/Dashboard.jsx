@@ -156,15 +156,15 @@ const Dashboard = () => {
   return (
     <div className="dashboard-content">
 
-      <div className="card">
+      <motion.div className="card" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
         <h2>Dashboard Principal</h2>
         <p>Presiona el Boton "filtros para graficos" para empezar a graficar.</p>
         <p>Para generar el reporte en excel Presiona el boton "filtros para graficos" selecciona los que requieras
           y presiona "Aplicar en reportes".</p>
-      </div>
+      </motion.div>
 
       {/* Date filters */}
-      <div className="date-filters-section">
+      <motion.div className="date-filters-section" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.05 }}>
         <h3>Filtros de Fecha</h3>
         <div className="date-filters">
           <label className="date-label">
@@ -186,7 +186,7 @@ const Dashboard = () => {
             />
           </label>
         </div>
-      </div>
+      </motion.div>
 
       <button className="btn" onClick={() => setIsModalOpen(true)}>
         Filtros para graficos
