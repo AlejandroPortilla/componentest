@@ -1,7 +1,7 @@
 import React from 'react';
-import { FaHeart, FaTachometerAlt, FaHistory, FaChartBar, FaQuestionCircle, FaSignOutAlt } from 'react-icons/fa';
+import { FaHeart, FaTachometerAlt, FaHistory, FaChartBar, FaQuestionCircle } from 'react-icons/fa';
 import { useSidebar } from '../../context/SidebarContext';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import '../../styles/Sidebar.css';
 
 const Sidebar = () => {
@@ -18,29 +18,26 @@ const Sidebar = () => {
 
   return (
     <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
-      {/* Logo Section */}
       <div className="sidebar-logo">
         <FaHeart className="logo-icon" />
         <span className="logo-text">RespUSI Pabon</span>
       </div>
 
-      {/* Top Menu Section */}
       <div className="sidebar-menu top-menu">
         {topMenuItems.map((item, index) => (
-          <Link key={index} to={item.path} className="menu-item">
+          <NavLink key={index} to={item.path} className={({ isActive }) => `menu-item ${isActive ? 'active' : ''}`}>
             <span className="menu-icon">{item.icon}</span>
             <span className="menu-text">{item.name}</span>
-          </Link>
+          </NavLink>
         ))}
       </div>
 
-      {/* Bottom Menu Section */}
       <div className="sidebar-menu bottom-menu">
         {bottomMenuItems.map((item, index) => (
-          <Link key={index} to={item.path} className="menu-item">
+          <NavLink key={index} to={item.path} className={({ isActive }) => `menu-item ${isActive ? 'active' : ''}`}>
             <span className="menu-icon">{item.icon}</span>
             <span className="menu-text">{item.name}</span>
-          </Link>
+          </NavLink>
         ))}
       </div>
     </div>
