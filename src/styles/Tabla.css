@@ -166,6 +166,22 @@ h2 {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  max-height: 220px; /* limit per-category chip list height */
+  overflow-y: auto;
+  position: relative;
+  padding-bottom: 8px; /* space so last chips aren't hidden behind gradient */
+  -webkit-overflow-scrolling: touch;
+}
+
+.grid-items::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 36px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(241,246,255,0), rgba(241,246,255,0.95));
 }
 
 .categoria-chip {
