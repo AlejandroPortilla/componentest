@@ -262,22 +262,29 @@ details.reportes-accordion[open] {
 
 .sociodemografica-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 18px;
+  align-items: start;
 }
 
 .item-chart {
-  background-color: #f8f9fa;
+  background-color: var(--card);
   border-radius: 12px;
-  padding: 16px;
-  border: 1px solid #e9ecef;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 14px;
+  border: 1px solid var(--soft-border);
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
 }
 
 .item-chart:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(2,6,23,0.06);
 }
+
+.item-chart .chart-header h4 { margin: 0; color: var(--primary); font-weight: 700; }
+.item-chart .chart-wrapper { flex: 1 1 auto; min-height: 180px; }
 
 .no-selections {
   text-align: center;
