@@ -136,8 +136,8 @@ h2 {
 }
 
 .categoria-title {
-  font-weight: 600;
-  color: #2c3e50;
+  font-weight: 700;
+  color: var(--primary);
 }
 
 .categoria-actions {
@@ -149,9 +149,18 @@ h2 {
 .categoria-search {
   padding: 6px 8px;
   border-radius: 8px;
-  border: 1px solid #dfe7f6;
+  border: 1px solid #e6eefb;
   background: #f7f9ff;
   font-size: 14px;
+}
+
+.categoria-chip {
+  background: linear-gradient(180deg, rgba(56,178,172,0.06), #f1f6ff);
+}
+
+.categoria-chip.selected {
+  background: linear-gradient(180deg, rgba(56,178,172,0.12), rgba(43,108,176,0.06));
+  border-color: var(--accent);
 }
 
 .select-all {
