@@ -1,8 +1,78 @@
 /* Reportes Styles */
 .reportes-content {
-  max-width: 3800px; /* Aumentar el ancho máximo para que no se vea oprimido */
+  max-width: 1200px; /* Constrain width for readability */
   margin: 0 auto; /* Center the content */
   padding: 20px; /* Add padding for spacing */
+}
+
+/* Top search and selected chips */
+.filters-top {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.global-search {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #dfe7f6;
+  background: #f7f9ff;
+}
+
+.chips-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Accordion / details styling */
+details.reportes-accordion {
+  background: #fff;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border: 1px solid #e6eefb;
+}
+
+details.reportes-accordion summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 4px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+details.reportes-accordion[open] {
+  box-shadow: 0 6px 22px rgba(0,0,0,0.06);
+}
+
+.details-count {
+  background: #f1f6ff;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: #1f4e79;
+}
+
+/* Keep existing cards-container but make it flow vertical */
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Footer actions */
+.actions-row {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 18px;
 }
 
 .cards-container {
