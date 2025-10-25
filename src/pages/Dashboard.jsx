@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import TablaCategoria from '../components/common/TablaCategoria';
 import { useFilter } from '../context/FilterContext';
@@ -9,6 +8,7 @@ import {
 } from '../data/filters';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import html2canvas from 'html2canvas';
+import { motion, AnimatePresence } from 'framer-motion';
 import "../styles/Tabla.css";
 import "../styles/Reportes.css";
 
