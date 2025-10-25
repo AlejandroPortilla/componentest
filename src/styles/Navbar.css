@@ -7,8 +7,8 @@
   left: 250px; /* Match sidebar width */
   right: 0;
   z-index: 900;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: left 0.3s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: left 0.3s ease, box-shadow 0.2s ease;
 }
 
 .navbar-content {
@@ -31,8 +31,8 @@
   font-size: 18px;
   cursor: pointer;
   padding: 8px;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,6 +40,7 @@
 
 .sidebar-toggle:hover {
   background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
 }
 
 .navbar-user {

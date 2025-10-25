@@ -82,29 +82,32 @@ h2 {
 /* Botón */
 .btn {
   display: block;
-  width: 100%; 
-  padding: 10px 20px; 
+  width: 100%;
+  padding: 10px 20px;
   margin: 20px 0 0 0;
   border: none;
   background-color: #759CFF;
   color: white;
   cursor: pointer;
-  border-radius: 5px;
-  transition: 0.3s;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   text-align: center;
   width: 90%;
   max-width: 400px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .btn:hover {
   background-color: #3498db;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
 }
 
 /* Laboratorio Card */
 .laboratorio-card {
   background-color: #e0f7fa;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 12px;
   margin-bottom: 20px;
   width: 350px; /* Increased width for better spacing */
 }
@@ -112,4 +115,167 @@ h2 {
 /* Cards Container */
 .cards-container {
   margin: 20px; /* Added margin for better spacing */
+}
+
+/* New grid mode for TablaCategoria */
+.categoria-grid {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid #e6eefb;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-bottom: 14px;
+}
+
+.categoria-grid-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.categoria-title {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.categoria-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.categoria-search {
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #e6eefb;
+  background: #f7f9ff;
+  font-size: 14px;
+}
+
+.categoria-chip {
+  background: linear-gradient(180deg, rgba(56,178,172,0.06), #f1f6ff);
+}
+
+.categoria-chip.selected {
+  background: linear-gradient(180deg, rgba(56,178,172,0.12), rgba(43,108,176,0.06));
+  border-color: var(--accent);
+}
+
+.select-all {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.grid-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-height: 220px; /* limit per-category chip list height */
+  overflow-y: auto;
+  position: relative;
+  padding-bottom: 8px; /* space so last chips aren't hidden behind gradient */
+  -webkit-overflow-scrolling: touch;
+}
+
+.grid-items::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 36px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(241,246,255,0), rgba(241,246,255,0.95));
+}
+
+.categoria-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: #f1f6ff;
+  border: 1px solid rgba(52,152,219,0.08);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.categoria-chip.selected {
+  background: #e6f4ff;
+  border-color: #3498db;
+  box-shadow: 0 6px 18px rgba(52,152,219,0.08);
+  transform: translateY(-2px);
+}
+
+.categoria-chip input[type="checkbox"] {
+  transform: scale(1.05);
+}
+
+.chip-label {
+  font-size: 14px;
+  color: #1f4e79;
+}
+
+.no-items {
+  color: #6c757d;
+  padding: 12px 0;
+}
+
+/* Chips list used in modal and reportes */
+.chips-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+  max-height: 140px; /* limit height for selected chips */
+  overflow-y: auto;
+  position: relative;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chips-list::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 28px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0.95));
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid #e6eefb;
+  font-size: 13px;
+}
+
+.chip .remove {
+  background: none;
+  border: none;
+  color: #c0392b;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Sticky footer for modal/reportes */
+.filters-footer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 12px 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0.95));
 }

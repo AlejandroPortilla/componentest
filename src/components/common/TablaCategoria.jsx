@@ -1,12 +1,20 @@
 // TablaCategoria.jsx
 import { useState, useEffect } from "react";
 
-export default function TablaCategoria({ titulo, datos, onChange, preSeleccionados = [] }) {
+export default function TablaCategoria({ titulo, datos, onChange, preSeleccionados = [], mode = 'table', searchable = false }) {
   const [seleccionados, setSeleccionados] = useState(preSeleccionados);
+  const [filter, setFilter] = useState('');
 
   useEffect(() => {
     setSeleccionados(preSeleccionados);
   }, [preSeleccionados]);
+
+  useEffect(() => {
+    // If parent clears data, ensure local state sync
+    if (!preSeleccionados || preSeleccionados.length === 0) {
+      setSeleccionados([]);
+    }
+  }, [datos]);
 
   const toggleSeleccion = (item) => {
     let nuevos;
@@ -29,6 +37,60 @@ export default function TablaCategoria({ titulo, datos, onChange, preSeleccionad
     setSeleccionados(nuevos);
     onChange(titulo, nuevos);
   };
+
+  const datosFiltrados = datos.filter(d => d.toLowerCase().includes(filter.toLowerCase()));
+
+  if (mode === 'grid') {
+    return (
+      <div className="categoria-grid">
+        <div className="categoria-grid-header">
+          <div className="categoria-title">{titulo}</div>
+          <div className="categoria-actions">
+            {searchable && (
+              <input
+                aria-label={`Buscar en ${titulo}`}
+                placeholder="Buscar..."
+                className="categoria-search"
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+              />
+            )}
+            <label className="select-all">
+              <input
+                type="checkbox"
+                checked={seleccionados.length === datos.length}
+                onChange={toggleSeleccionarTodo}
+              />
+              <span className="select-all-label">Todo</span>
+            </label>
+          </div>
+        </div>
+
+        <div className="grid-items">
+          {datosFiltrados.map((item, idx) => {
+            const sel = seleccionados.includes(item);
+            return (
+              <button key={idx} className={`categoria-chip ${sel ? 'selected' : ''}`} onClick={() => toggleSeleccion(item)}>
+                <input
+                  type="checkbox"
+                  checked={sel}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    toggleSeleccion(item);
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <span className="chip-label">{item}</span>
+              </button>
+            );
+          })}
+          {datosFiltrados.length === 0 && (
+            <div className="no-items">No hay resultados</div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <table className="categoria-table">

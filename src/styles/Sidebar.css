@@ -52,12 +52,19 @@
   padding: 12px 20px;
   color: white;
   text-decoration: none;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
   gap: 12px;
+  border-left: 3px solid transparent;
 }
 
 .menu-item:hover {
   background-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(2px);
+}
+
+.menu-item.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-left-color: #e74c3c;
 }
 
 .menu-icon {

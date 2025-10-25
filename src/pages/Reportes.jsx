@@ -13,6 +13,7 @@ import "../styles/Reportes.css";
 
 const Reportes = () => {
   const { selecciones, setSelecciones } = useFilter();
+  const [searchTerm, setSearchTerm] = React.useState('');
 
   const manejarSeleccion = (categoria, items) => {
     setSelecciones((prev) => ({ ...prev, [categoria]: items }));
@@ -32,51 +33,116 @@ const Reportes = () => {
     XLSX.writeFile(wb, "reporte.xlsx");
   };
 
+  const clearSelection = () => {
+    setSelecciones({});
+  };
+
+  const allSelectedItems = Object.entries(selecciones).flatMap(([cat, items]) => items.map(it => ({ cat, it })));
+
+  const filterCategories = (categories) => {
+    return Object.fromEntries(
+      Object.entries(categories).map(([key, arr]) => [
+        key,
+        arr.filter(item => item.toLowerCase().includes(searchTerm.toLowerCase()))
+      ]).filter(([key, arr]) => arr.length > 0)
+    );
+  };
+
+  const filteredLaboratorios = filterCategories(categorias_laboratorios);
+  const filteredSignos = filterCategories(categorias_signos_vitales);
+  const filteredSociodemograficas = filterCategories(categorias_sociodemograficas);
+
   return (
     <div className="reportes-content">
       <h1>Reportes</h1>
-      <div className="cards-container">
-        <section className="laboratorio-card">
-          <h2>Laboratorio</h2>
-          {Object.entries(categorias_laboratorios).map(([nombre, datos]) => (
-            <TablaCategoria
-              key={nombre}
-              titulo={nombre}
-              datos={datos}
-              onChange={manejarSeleccion}
-              preSeleccionados={selecciones[nombre] || []}
-            />
-          ))}
-        </section>
 
-        <section className="laboratorio-card">
-          <h2>Clinicas</h2>
-          {Object.entries(categorias_signos_vitales).map(([nombre, datos]) => (
-            <TablaCategoria
-              key={nombre}
-              titulo={nombre}
-              datos={datos}
-              onChange={manejarSeleccion}
-              preSeleccionados={selecciones[nombre] || []}
-            />
-          ))}
-        </section>
-        <section className="laboratorio-card">
-          <h2>Sociodemografica</h2>
-          {Object.entries(categorias_sociodemograficas).map(([nombre, datos]) => (
-            <TablaCategoria
-              key={nombre}
-              titulo={nombre}
-              datos={datos}
-              onChange={manejarSeleccion}
-              preSeleccionados={selecciones[nombre] || []}
-            />
-          ))}
-        </section>
+      <div className="filters-top">
+        <input className="global-search" placeholder="Buscar filtros..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+        <div className="chips-list-wrapper">
+          <div style={{ fontSize: 13, color: '#6c757d' }}>Seleccionados</div>
+          <div className="chips-list">
+            {allSelectedItems.length === 0 ? <div style={{ color: '#6c757d' }}>Ninguno</div> : allSelectedItems.map((s, i) => (
+              <div key={i} className="chip">{s.it} <button className="remove" onClick={() => {
+                const nuevos = (selecciones[s.cat] || []).filter(x => x !== s.it);
+                setSelecciones(prev => ({ ...prev, [s.cat]: nuevos }));
+              }}>✕</button></div>
+            ))}
+          </div>
+        </div>
       </div>
-      <button className="btn" onClick={generarReporte}>
-        Generar reporte Excel
-      </button>
+
+      <div className="cards-container">
+        <div>
+          <h2>Laboratorio</h2>
+          {Object.entries(filteredLaboratorios).map(([nombre, datos]) => (
+            <details key={nombre} className="reportes-accordion">
+              <summary>
+                <span>{nombre}</span>
+                <span className="details-count">{(selecciones[nombre] || []).length}</span>
+              </summary>
+              <div style={{ padding: 8 }}>
+                <TablaCategoria
+                  titulo={nombre}
+                  datos={datos}
+                  onChange={manejarSeleccion}
+                  preSeleccionados={selecciones[nombre] || []}
+                  mode="grid"
+                  searchable={true}
+                />
+              </div>
+            </details>
+          ))}
+        </div>
+
+        <div>
+          <h2>Clínicas</h2>
+          {Object.entries(filteredSignos).map(([nombre, datos]) => (
+            <details key={nombre} className="reportes-accordion">
+              <summary>
+                <span>{nombre}</span>
+                <span className="details-count">{(selecciones[nombre] || []).length}</span>
+              </summary>
+              <div style={{ padding: 8 }}>
+                <TablaCategoria
+                  titulo={nombre}
+                  datos={datos}
+                  onChange={manejarSeleccion}
+                  preSeleccionados={selecciones[nombre] || []}
+                  mode="grid"
+                  searchable={true}
+                />
+              </div>
+            </details>
+          ))}
+        </div>
+
+        <div>
+          <h2>Sociodemográfica</h2>
+          {Object.entries(filteredSociodemograficas).map(([nombre, datos]) => (
+            <details key={nombre} className="reportes-accordion">
+              <summary>
+                <span>{nombre}</span>
+                <span className="details-count">{(selecciones[nombre] || []).length}</span>
+              </summary>
+              <div style={{ padding: 8 }}>
+                <TablaCategoria
+                  titulo={nombre}
+                  datos={datos}
+                  onChange={manejarSeleccion}
+                  preSeleccionados={selecciones[nombre] || []}
+                  mode="grid"
+                  searchable={true}
+                />
+              </div>
+            </details>
+          ))}
+        </div>
+
+        <div className="actions-row">
+          <button className="btn" onClick={clearSelection}>Limpiar Selecciones</button>
+          <button className="btn" onClick={generarReporte}>Exportar a Excel</button>
+        </div>
+      </div>
     </div>
   );
 };

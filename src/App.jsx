@@ -10,12 +10,16 @@ import Historial from './pages/Historial'
 import Reportes from './pages/Reportes'
 import Ayuda from './pages/Ayuda'
 
+import { useSidebar } from './context/SidebarContext'
+
 function AppContent() {
+  const { isCollapsed } = useSidebar();
+
   return (
     <div className="app">
       <Sidebar />
       <Navbar />
-      <main className="main-content">
+      <main className={`main-content ${isCollapsed ? 'collapsed' : ''}`}>
         <div className="content-wrapper">
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />

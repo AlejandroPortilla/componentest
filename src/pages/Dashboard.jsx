@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TablaCategoria from '../components/common/TablaCategoria';
 import { useFilter } from '../context/FilterContext';
 import {
@@ -9,6 +8,7 @@ import {
 } from '../data/filters';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import html2canvas from 'html2canvas';
+import { motion, AnimatePresence } from 'framer-motion';
 import "../styles/Tabla.css";
 import "../styles/Reportes.css";
 
@@ -29,10 +29,12 @@ const categoriaPrincipalMap = {
 
 // Función para renderizar gráfico
 const renderChart = (data, chartType) => {
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82ca9d', '#ffc658', '#ff7c7c'];
+  // Palette tuned to CSS variables (fallback hex values)
+  const COLORS = ['#2b6cb0', '#38b2ac', '#81c2ff', '#ffd080', '#7b8bf6', '#82ca9d', '#ffc658', '#ff7c7c'];
 
   switch (chartType) {
     case 'pie': {
+      // compact pie settings: smaller radii, percentage-only labels, spaced slices
       return (
         <PieChart>
           <Pie
@@ -40,66 +42,69 @@ const renderChart = (data, chartType) => {
             cx="50%"
             cy="50%"
             labelLine={false}
-            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-            outerRadius={120}
-            fill="#8884d8"
+            // show only percentage inside slices to avoid overflow
+            label={({ percent }) => `${Math.round(percent * 100)}%`}
+            outerRadius={60}
+            innerRadius={30}
+            paddingAngle={3}
             dataKey="value"
           >
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
-          <Tooltip />
+          <Tooltip formatter={(value, name) => [value, name]} />
+          <Legend layout="horizontal" verticalAlign="bottom" formatter={(value) => (typeof value === 'string' && value.length > 20 ? value.slice(0, 17) + '…' : value)} />
         </PieChart>
       );
     }
     case 'line': {
       return (
-        <LineChart data={data}>
+        <LineChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 30 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="name"
-            angle={-45}
-            textAnchor="end"
-            height={150}
+            angle={data.length > 4 ? -35 : -10}
+            textAnchor={data.length > 4 ? "end" : "middle"}
+            height={data.length > 4 ? 90 : 60}
             interval={0}
-            fontSize={12}
+            tick={{ fontSize: 12, fill: '#334155' }}
           />
-          <YAxis />
+          <YAxis tick={{ fontSize: 12 }} />
           <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} />
+          <Legend verticalAlign="top" />
+          <Line type="monotone" dataKey="value" stroke={COLORS[0]} strokeWidth={2.2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
         </LineChart>
       );
     }
 
     default:
       return (
-        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+        <BarChart data={data} margin={{ top: 8, right: 12, left: 0, bottom: 40 }} barCategoryGap="20%">
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="name"
-            fontSize={14}
+            tick={{ fontSize: 12, fill: '#334155' }}
             interval={0}
-            angle={data.length > 3 ? -45 : 0}
-            textAnchor={data.length > 3 ? "end" : "middle"}
-            height={data.length > 3 ? 100 : 60}
+            angle={data.length > 4 ? -35 : 0}
+            textAnchor={data.length > 4 ? "end" : "middle"}
+            height={data.length > 4 ? 80 : 50}
           />
-          <YAxis fontSize={14} />
+          <YAxis tick={{ fontSize: 12 }} />
           <Tooltip
             contentStyle={{
-              backgroundColor: '#fff',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              fontSize: '14px'
+              backgroundColor: 'var(--card)',
+              border: '1px solid rgba(2,6,23,0.06)',
+              borderRadius: '6px',
+              fontSize: '13px'
             }}
           />
           <Legend />
           <Bar
             dataKey="value"
-            fill="#8884d8"
-            radius={[4, 4, 0, 0]}
-            barSize={data.length === 1 ? 200 : data.length === 2 ? 150 : data.length === 3 ? 100 : 60}
+            fill={COLORS[1]}
+            radius={[6, 6, 4, 4]}
+            barSize={Math.max(40, Math.min(100, Math.floor(600 / Math.max(1, data.length))))}
           />
         </BarChart>
       );
@@ -114,6 +119,16 @@ const Dashboard = () => {
   const [generalChartType, setGeneralChartType] = useState('bar');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+
+  useEffect(() => {
+    // prevent background scrolling when modal is open
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isModalOpen]);
 
   const manejarSeleccion = (categoria, items) => {
     setSelecciones((prev) => ({ ...prev, [categoria]: items }));
@@ -156,15 +171,15 @@ const Dashboard = () => {
   return (
     <div className="dashboard-content">
 
-      <div className="card">
+      <motion.div className="card" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
         <h2>Dashboard Principal</h2>
         <p>Presiona el Boton "filtros para graficos" para empezar a graficar.</p>
         <p>Para generar el reporte en excel Presiona el boton "filtros para graficos" selecciona los que requieras
           y presiona "Aplicar en reportes".</p>
-      </div>
+      </motion.div>
 
       {/* Date filters */}
-      <div className="date-filters-section">
+      <motion.div className="date-filters-section" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.05 }}>
         <h3>Filtros de Fecha</h3>
         <div className="date-filters">
           <label className="date-label">
@@ -186,7 +201,7 @@ const Dashboard = () => {
             />
           </label>
         </div>
-      </div>
+      </motion.div>
 
       <button className="btn" onClick={() => setIsModalOpen(true)}>
         Filtros para graficos
@@ -194,7 +209,7 @@ const Dashboard = () => {
 
       {/* New section for general cases and summary */}
       {startDate && endDate && (
-        <div className="charts-container">
+        <motion.div className="charts-container" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
           <h2>Casos Reportados en General</h2>
           {(() => {
             let chartData = [];
@@ -219,7 +234,7 @@ const Dashboard = () => {
             return (
               <div className="general-cases-section">
                 <div className="general-cases-right">
-                  <div className="chart-card">
+                  <motion.div className="chart-card" initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0.15 }}>
                     <div className="chart-header">
                       <h3>{title}</h3>
                       <div className="chart-controls">
@@ -232,12 +247,12 @@ const Dashboard = () => {
 
                     <div className="chart-content">
                       <div id="chart-general-cases" className="chart-wrapper">
-                        <ResponsiveContainer width="100%" height={400}>
+                        <ResponsiveContainer width="100%" height={360}>
                           {renderChart(chartData, generalChartType)}
                         </ResponsiveContainer>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
 
                 </div>
               </div>
@@ -245,7 +260,7 @@ const Dashboard = () => {
 
             );
           })()}
-        </div>
+        </motion.div>
       )}
 
       {/* Gráficos separados por categoría principal */}
@@ -383,72 +398,123 @@ const Dashboard = () => {
         </div>
       )}
 
-      {isModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>Filtros para Gráficos</h2>
-            <div className="modal-buttons">
-              <input
-                type="text"
-                placeholder="Buscar filtros..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-              />
-              <button className="btn" onClick={() => {
-                guardarHistorial(selecciones);
-                setIsModalOpen(false);
-                // Navigate to reportes or apply filters there
-                window.location.href = '/reportes';
-              }}>
-                Aplicar en Reportes
-              </button>
-              <button className="btn" onClick={() => setIsModalOpen(false)}>
-                Cerrar
-              </button>
-            </div>
-            <div className="cards-container">
-              <section className="laboratorio-card">
-                <h2>Laboratorio</h2>
-                {Object.entries(filteredLaboratorios).map(([nombre, datos]) => (
-                  <TablaCategoria
-                    key={nombre}
-                    titulo={nombre}
-                    datos={datos}
-                    onChange={manejarSeleccion}
-                    preSeleccionados={selecciones[nombre] || []}
-                  />
-                ))}
-              </section>
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div className="modal-overlay" onClick={() => setIsModalOpen(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div className="modal-content" onClick={(e) => e.stopPropagation()} initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 12, opacity: 0 }} transition={{ duration: 0.2 }}>
 
-              <section className="laboratorio-card">
-                <h2>Clinicas</h2>
-                {Object.entries(filteredSignos).map(([nombre, datos]) => (
-                  <TablaCategoria
-                    key={nombre}
-                    titulo={nombre}
-                    datos={datos}
-                    onChange={manejarSeleccion}
-                    preSeleccionados={selecciones[nombre] || []}
-                  />
-                ))}
-              </section>
-              <section className="laboratorio-card">
-                <h2>Sociodemografica</h2>
-                {Object.entries(filteredSociodemograficas).map(([nombre, datos]) => (
-                  <TablaCategoria
-                    key={nombre}
-                    titulo={nombre}
-                    datos={datos}
-                    onChange={manejarSeleccion}
-                    preSeleccionados={selecciones[nombre] || []}
-                  />
-                ))}
-              </section>
-            </div>
-          </div>
-        </div>
-      )}
+              <div className="modal-header">
+                <div className="modal-title">Filtros para Gráficos</div>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <button className="modal-close" onClick={() => { guardarHistorial(selecciones); setIsModalOpen(false); window.location.href = '/reportes'; }}>Aplicar</button>
+                  <button className="modal-close" onClick={() => setIsModalOpen(false)}>✕</button>
+                </div>
+              </div>
+
+              <div className="modal-left">
+                <input
+                  type="text"
+                  placeholder="Buscar filtros..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="modal-search"
+                />
+
+                <div style={{ display: 'grid', gap: 12 }}>
+                  <div>
+                    <h3 style={{ fontSize: 15, margin: '6px 0' }}>Laboratorio</h3>
+                    {Object.entries(filteredLaboratorios).map(([nombre, datos]) => (
+                      <details key={nombre} className="reportes-accordion">
+                        <summary>
+                          <span>{nombre}</span>
+                          <span className="details-count">{(selecciones[nombre] || []).length}</span>
+                        </summary>
+                        <div style={{ padding: 8 }}>
+                          <TablaCategoria
+                            titulo={nombre}
+                            datos={datos}
+                            onChange={manejarSeleccion}
+                            preSeleccionados={selecciones[nombre] || []}
+                            mode="grid"
+                            searchable={true}
+                          />
+                        </div>
+                      </details>
+                    ))}
+                  </div>
+
+                  <div>
+                    <h3 style={{ fontSize: 15, margin: '6px 0' }}>Clínicas</h3>
+                    {Object.entries(filteredSignos).map(([nombre, datos]) => (
+                      <details key={nombre} className="reportes-accordion">
+                        <summary>
+                          <span>{nombre}</span>
+                          <span className="details-count">{(selecciones[nombre] || []).length}</span>
+                        </summary>
+                        <div style={{ padding: 8 }}>
+                          <TablaCategoria
+                            titulo={nombre}
+                            datos={datos}
+                            onChange={manejarSeleccion}
+                            preSeleccionados={selecciones[nombre] || []}
+                            mode="grid"
+                            searchable={true}
+                          />
+                        </div>
+                      </details>
+                    ))}
+                  </div>
+
+                  <div>
+                    <h3 style={{ fontSize: 15, margin: '6px 0' }}>Sociodemografica</h3>
+                    {Object.entries(filteredSociodemograficas).map(([nombre, datos]) => (
+                      <details key={nombre} className="reportes-accordion">
+                        <summary>
+                          <span>{nombre}</span>
+                          <span className="details-count">{(selecciones[nombre] || []).length}</span>
+                        </summary>
+                        <div style={{ padding: 8 }}>
+                          <TablaCategoria
+                            titulo={nombre}
+                            datos={datos}
+                            onChange={manejarSeleccion}
+                            preSeleccionados={selecciones[nombre] || []}
+                            mode="grid"
+                            searchable={true}
+                          />
+                        </div>
+                      </details>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-right">
+                <div className="modal-selected-title">Seleccionados</div>
+                <div className="selected-box">
+                  {Object.entries(selecciones).flatMap(([cat, items]) => items.map((it) => ({ cat, it }))).length === 0 ? (
+                    <div style={{ color: '#6c757d' }}>Ninguno</div>
+                  ) : (
+                    Object.entries(selecciones).flatMap(([cat, items]) => items.map((it) => ({ cat, it }))).map((s, idx) => (
+                      <div key={idx} className="chip">{s.it} <button className="remove" onClick={() => {
+                        const nuevos = (selecciones[s.cat] || []).filter(x => x !== s.it);
+                        setSelecciones(prev => ({ ...prev, [s.cat]: nuevos }));
+                      }}>✕</button></div>
+                    ))
+                  )}
+                </div>
+
+                <div className="modal-actions">
+                  <button className="btn" onClick={() => { setSelecciones({}); }}>Limpiar</button>
+                  <button className="btn" onClick={() => { guardarHistorial(selecciones); setIsModalOpen(false); window.location.href = '/reportes'; }}>Aplicar en Reportes</button>
+                </div>
+
+              </div>
+
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
