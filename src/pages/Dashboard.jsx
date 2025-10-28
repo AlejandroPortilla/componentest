@@ -69,10 +69,24 @@ const renderLineLabel = (props) => {
   );
 };
 
+// Custom label renderer for donut percentages placed inside the ring to avoid overflow
+const renderDonutLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+  if (!percent || percent < 0.02) return null; // hide very small slices
+  const RADIAN = Math.PI / 180;
+  const r = innerRadius + (outerRadius - innerRadius) * 0.5; // mid of the ring
+  const x = cx + r * Math.cos(-midAngle * RADIAN);
+  const y = cy + r * Math.sin(-midAngle * RADIAN);
+  return (
+    <text x={x} y={y} fill="#334155" fontSize={12} textAnchor="middle" dominantBaseline="central">
+      {`${Math.round(percent * 100)}%`}
+    </text>
+  );
+};
+
 const renderChart = (data, chartType) => {
   switch (chartType) {
     case 'pie': {
-      // compact pie settings: smaller radii, percentage-only labels, spaced slices
+      // donut with larger ring and internal percentage labels
       return (
         <PieChart>
           <Pie
@@ -80,11 +94,10 @@ const renderChart = (data, chartType) => {
             cx="50%"
             cy="50%"
             labelLine={false}
-            // show only percentage inside slices to avoid overflow
-            label={({ percent }) => `${Math.round(percent * 100)}%`}
-            outerRadius={60}
-            innerRadius={30}
-            paddingAngle={3}
+            label={renderDonutLabel}
+            outerRadius={100}
+            innerRadius={68}
+            paddingAngle={2}
             dataKey="value"
           >
             {data.map((entry, index) => (
@@ -217,34 +230,37 @@ const Dashboard = () => {
           y presiona "Aplicar en reportes".</p>
       </div>
 
-      {/* Date filters */}
-      <div className="date-filters-section">
-        <h3>Filtros de Fecha</h3>
-        <div className="date-filters">
-          <label className="date-label">
-            Fecha de inicio:
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="date-input"
-            />
-          </label>
-          <label className="date-label">
-            Fecha de fin:
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="date-input"
-            />
-          </label>
+      <div className="filters-row">
+        <div className="date-filters-section">
+          <h3>Filtros de Fecha</h3>
+          <div className="date-filters">
+            <label className="date-label">
+              Fecha de inicio:
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="date-input"
+              />
+            </label>
+            <label className="date-label">
+              Fecha de fin:
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="date-input"
+              />
+            </label>
+          </div>
+        </div>
+
+        <div className="filters-cta-wrapper">
+          <button className="btn filters-cta" onClick={() => setIsModalOpen(true)}>
+            Filtros para graficos
+          </button>
         </div>
       </div>
-
-      <button className="btn" onClick={() => setIsModalOpen(true)}>
-        Filtros para graficos
-      </button>
 
       {/* New section for general cases and summary */}
       {startDate && endDate && (
