@@ -424,7 +424,7 @@ const Dashboard = () => {
                   <div>
                     <h3 style={{ fontSize: 15, margin: '6px 0' }}>Laboratorio</h3>
                     {Object.entries(filteredLaboratorios).map(([nombre, datos]) => (
-                      <details key={nombre} className="reportes-accordion">
+                      <details key={nombre} className="reportes-accordion" open={Boolean(searchTerm)}>
                         <summary>
                           <span>{nombre}</span>
                           <span className="details-count">{(selecciones[nombre] || []).length}</span>
@@ -446,7 +446,7 @@ const Dashboard = () => {
                   <div>
                     <h3 style={{ fontSize: 15, margin: '6px 0' }}>Clínicas</h3>
                     {Object.entries(filteredSignos).map(([nombre, datos]) => (
-                      <details key={nombre} className="reportes-accordion">
+                      <details key={nombre} className="reportes-accordion" open={Boolean(searchTerm)}>
                         <summary>
                           <span>{nombre}</span>
                           <span className="details-count">{(selecciones[nombre] || []).length}</span>
@@ -468,7 +468,7 @@ const Dashboard = () => {
                   <div>
                     <h3 style={{ fontSize: 15, margin: '6px 0' }}>Sociodemografica</h3>
                     {Object.entries(filteredSociodemograficas).map(([nombre, datos]) => (
-                      <details key={nombre} className="reportes-accordion">
+                      <details key={nombre} className="reportes-accordion" open={Boolean(searchTerm)}>
                         <summary>
                           <span>{nombre}</span>
                           <span className="details-count">{(selecciones[nombre] || []).length}</span>
