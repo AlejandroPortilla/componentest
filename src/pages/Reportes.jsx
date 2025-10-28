@@ -75,7 +75,7 @@ const Reportes = () => {
         <div>
           <h2>Laboratorio</h2>
           {Object.entries(filteredLaboratorios).map(([nombre, datos]) => (
-            <details key={nombre} className="reportes-accordion">
+            <details key={nombre} className="reportes-accordion" open={Boolean(searchTerm)}>
               <summary>
                 <span>{nombre}</span>
                 <span className="details-count">{(selecciones[nombre] || []).length}</span>
@@ -97,7 +97,7 @@ const Reportes = () => {
         <div>
           <h2>Clínicas</h2>
           {Object.entries(filteredSignos).map(([nombre, datos]) => (
-            <details key={nombre} className="reportes-accordion">
+            <details key={nombre} className="reportes-accordion" open={Boolean(searchTerm)}>
               <summary>
                 <span>{nombre}</span>
                 <span className="details-count">{(selecciones[nombre] || []).length}</span>
@@ -119,7 +119,7 @@ const Reportes = () => {
         <div>
           <h2>Sociodemográfica</h2>
           {Object.entries(filteredSociodemograficas).map(([nombre, datos]) => (
-            <details key={nombre} className="reportes-accordion">
+            <details key={nombre} className="reportes-accordion" open={Boolean(searchTerm)}>
               <summary>
                 <span>{nombre}</span>
                 <span className="details-count">{(selecciones[nombre] || []).length}</span>
