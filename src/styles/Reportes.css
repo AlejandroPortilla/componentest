@@ -500,6 +500,61 @@ details.reportes-accordion[open] {
   box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.15);
 }
 
+/* Custom annotations panel for pie charts */
+.chart-annotations {
+  min-width: 220px;
+  max-width: 280px;
+  background-color: #fff;
+  border: 1px solid #e6eefb;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.pie-legend-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.pie-legend-item {
+  display: grid;
+  grid-template-columns: 12px 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.pie-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.pie-legend-text {
+  font-size: 13px;
+  color: #334155;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pie-legend-value {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 12px;
+}
+
+/* Color mapping classes to match chart segments */
+.color-dot-0 { background-color: #2b6cb0; }
+.color-dot-1 { background-color: #38b2ac; }
+.color-dot-2 { background-color: #81c2ff; }
+.color-dot-3 { background-color: #ffd080; }
+.color-dot-4 { background-color: #7b8bf6; }
+.color-dot-5 { background-color: #82ca9d; }
+.color-dot-6 { background-color: #ffc658; }
+.color-dot-7 { background-color: #ff7c7c; }
+
 /* Date Filters Styles */
 .date-filters-section {
   margin-bottom: 20px;
