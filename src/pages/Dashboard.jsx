@@ -230,35 +230,36 @@ const Dashboard = () => {
           y presiona "Aplicar en reportes".</p>
       </div>
 
-      {/* Date filters */}
-      <div className="date-filters-section">
-        <h3>Filtros de Fecha</h3>
-        <div className="date-filters">
-          <label className="date-label">
-            Fecha de inicio:
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="date-input"
-            />
-          </label>
-          <label className="date-label">
-            Fecha de fin:
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="date-input"
-            />
-          </label>
+      <div className="filters-row">
+        <div className="date-filters-section">
+          <h3>Filtros de Fecha</h3>
+          <div className="date-filters">
+            <label className="date-label">
+              Fecha de inicio:
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="date-input"
+              />
+            </label>
+            <label className="date-label">
+              Fecha de fin:
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="date-input"
+              />
+            </label>
+          </div>
         </div>
-      </div>
 
-      <div className="filters-cta-wrapper">
-        <button className="btn filters-cta" onClick={() => setIsModalOpen(true)}>
-          Filtros para graficos
-        </button>
+        <div className="filters-cta-wrapper">
+          <button className="btn filters-cta" onClick={() => setIsModalOpen(true)}>
+            Filtros para graficos
+          </button>
+        </div>
       </div>
 
       {/* New section for general cases and summary */}
