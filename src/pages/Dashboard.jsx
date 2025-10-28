@@ -30,19 +30,30 @@ const categoriaPrincipalMap = {
 };
 
 // Función para renderizar gráfico
-// Custom label renderer for bars to place labels inside when space allows or above otherwise
+// Custom label renderer for bars to place labels inside when space allows or above otherwise, stagger when above to avoid overlap
 const renderBarLabel = (props) => {
-  const { x, y, width, height, value } = props;
+  const { x, y, width, height, value, index } = props;
   const padding = 6;
   const fontSize = 12;
   const text = `${value}`;
   const centerX = x + width / 2;
   // Determine if label fits inside the bar
   const fitsInside = height > fontSize + padding * 2;
-  const textY = fitsInside ? (y + height / 2 + fontSize / 2 - 2) : (y - padding);
-  const fill = fitsInside ? '#ffffff' : '#334155';
+  if (fitsInside) {
+    const textY = y + height / 2 + fontSize / 2 - 2;
+    return (
+      <text x={centerX} y={textY} fill="#ffffff" fontSize={fontSize} textAnchor="middle">{text}</text>
+    );
+  }
+  // If it does not fit inside, position above the bar and stagger vertically using index to reduce overlap
+  const staggerStep = 12; // px per stagger
+  const staggerGroup = (index || 0) % 3; // 0,1,2
+  const textY = (y - padding) - (staggerGroup * staggerStep);
+  // Ensure text is not drawn off the top (keep at least fontSize + padding)
+  const minY = fontSize + padding;
+  const finalY = Math.max(minY, textY);
   return (
-    <text x={centerX} y={textY} fill={fill} fontSize={fontSize} textAnchor="middle">{text}</text>
+    <text x={centerX} y={finalY} fill="#334155" fontSize={fontSize} textAnchor="middle">{text}</text>
   );
 };
 
