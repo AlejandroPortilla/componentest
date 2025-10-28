@@ -532,7 +532,6 @@ const Dashboard = () => {
               <div className="modal-header">
                 <div className="modal-title">Filtros para Gráficos</div>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <button className="modal-close" onClick={() => { guardarHistorial(selecciones); setIsModalOpen(false); window.location.href = '/reportes'; }}>Aplicar</button>
                   <button className="modal-close" onClick={() => setIsModalOpen(false)}>✕</button>
                 </div>
               </div>
