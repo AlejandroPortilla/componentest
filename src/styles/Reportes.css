@@ -435,7 +435,7 @@ details.reportes-accordion[open] {
 }
 
 .chart-wrapper .recharts-wrapper {
-  overflow: hidden; /* clip any overflowing labels */
+  overflow: visible; /* allow labels placed near the top to be visible */
 }
 
 /* Make svg charts responsive inside card and avoid overflow */
