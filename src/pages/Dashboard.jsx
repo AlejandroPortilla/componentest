@@ -69,10 +69,24 @@ const renderLineLabel = (props) => {
   );
 };
 
+// Custom label renderer for donut percentages placed inside the ring to avoid overflow
+const renderDonutLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+  if (!percent || percent < 0.02) return null; // hide very small slices
+  const RADIAN = Math.PI / 180;
+  const r = innerRadius + (outerRadius - innerRadius) * 0.5; // mid of the ring
+  const x = cx + r * Math.cos(-midAngle * RADIAN);
+  const y = cy + r * Math.sin(-midAngle * RADIAN);
+  return (
+    <text x={x} y={y} fill="#334155" fontSize={12} textAnchor="middle" dominantBaseline="central">
+      {`${Math.round(percent * 100)}%`}
+    </text>
+  );
+};
+
 const renderChart = (data, chartType) => {
   switch (chartType) {
     case 'pie': {
-      // compact pie settings: smaller radii, percentage-only labels, spaced slices
+      // donut with larger ring and internal percentage labels
       return (
         <PieChart>
           <Pie
@@ -80,11 +94,10 @@ const renderChart = (data, chartType) => {
             cx="50%"
             cy="50%"
             labelLine={false}
-            // show only percentage inside slices to avoid overflow
-            label={({ percent }) => `${Math.round(percent * 100)}%`}
-            outerRadius={60}
-            innerRadius={30}
-            paddingAngle={3}
+            label={renderDonutLabel}
+            outerRadius={100}
+            innerRadius={68}
+            paddingAngle={2}
             dataKey="value"
           >
             {data.map((entry, index) => (
