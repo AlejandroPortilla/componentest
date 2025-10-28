@@ -255,9 +255,11 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <button className="btn" onClick={() => setIsModalOpen(true)}>
-        Filtros para graficos
-      </button>
+      <div className="filters-cta-wrapper">
+        <button className="btn filters-cta" onClick={() => setIsModalOpen(true)}>
+          Filtros para graficos
+        </button>
+      </div>
 
       {/* New section for general cases and summary */}
       {startDate && endDate && (
