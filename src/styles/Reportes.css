@@ -314,8 +314,7 @@ details.reportes-accordion[open] {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10, 20, 30, 0.5);
-  backdrop-filter: blur(4px) saturate(120%);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
