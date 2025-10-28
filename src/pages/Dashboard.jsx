@@ -8,7 +8,6 @@ import {
 } from '../data/filters';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import html2canvas from 'html2canvas';
-import { motion, AnimatePresence } from 'framer-motion';
 import "../styles/Tabla.css";
 import "../styles/Reportes.css";
 
@@ -171,15 +170,15 @@ const Dashboard = () => {
   return (
     <div className="dashboard-content">
 
-      <motion.div className="card" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+      <div className="card">
         <h2>Dashboard Principal</h2>
         <p>Presiona el Boton "filtros para graficos" para empezar a graficar.</p>
         <p>Para generar el reporte en excel Presiona el boton "filtros para graficos" selecciona los que requieras
           y presiona "Aplicar en reportes".</p>
-      </motion.div>
+      </div>
 
       {/* Date filters */}
-      <motion.div className="date-filters-section" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.05 }}>
+      <div className="date-filters-section">
         <h3>Filtros de Fecha</h3>
         <div className="date-filters">
           <label className="date-label">
@@ -201,7 +200,7 @@ const Dashboard = () => {
             />
           </label>
         </div>
-      </motion.div>
+      </div>
 
       <button className="btn" onClick={() => setIsModalOpen(true)}>
         Filtros para graficos
@@ -209,7 +208,7 @@ const Dashboard = () => {
 
       {/* New section for general cases and summary */}
       {startDate && endDate && (
-        <motion.div className="charts-container" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
+        <div className="charts-container">
           <h2>Casos Reportados en General</h2>
           {(() => {
             let chartData = [];
@@ -234,7 +233,7 @@ const Dashboard = () => {
             return (
               <div className="general-cases-section">
                 <div className="general-cases-right">
-                  <motion.div className="chart-card" initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0.15 }}>
+                  <div className="chart-card">
                     <div className="chart-header">
                       <h3>{title}</h3>
                       <div className="chart-controls">
@@ -252,7 +251,7 @@ const Dashboard = () => {
                         </ResponsiveContainer>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
 
                 </div>
               </div>
@@ -260,7 +259,7 @@ const Dashboard = () => {
 
             );
           })()}
-        </motion.div>
+        </div>
       )}
 
       {/* Gráficos separados por categoría principal */}
@@ -398,10 +397,9 @@ const Dashboard = () => {
         </div>
       )}
 
-      <AnimatePresence>
-        {isModalOpen && (
-          <motion.div className="modal-overlay" onClick={() => setIsModalOpen(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <motion.div className="modal-content" onClick={(e) => e.stopPropagation()} initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 12, opacity: 0 }} transition={{ duration: 0.2 }}>
+              {isModalOpen && (
+          <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
 
               <div className="modal-header">
                 <div className="modal-title">Filtros para Gráficos</div>
@@ -424,7 +422,7 @@ const Dashboard = () => {
                   <div>
                     <h3 style={{ fontSize: 15, margin: '6px 0' }}>Laboratorio</h3>
                     {Object.entries(filteredLaboratorios).map(([nombre, datos]) => (
-                      <details key={nombre} className="reportes-accordion">
+                      <details key={nombre} className="reportes-accordion" open={Boolean(searchTerm)}>
                         <summary>
                           <span>{nombre}</span>
                           <span className="details-count">{(selecciones[nombre] || []).length}</span>
@@ -446,7 +444,7 @@ const Dashboard = () => {
                   <div>
                     <h3 style={{ fontSize: 15, margin: '6px 0' }}>Clínicas</h3>
                     {Object.entries(filteredSignos).map(([nombre, datos]) => (
-                      <details key={nombre} className="reportes-accordion">
+                      <details key={nombre} className="reportes-accordion" open={Boolean(searchTerm)}>
                         <summary>
                           <span>{nombre}</span>
                           <span className="details-count">{(selecciones[nombre] || []).length}</span>
@@ -468,7 +466,7 @@ const Dashboard = () => {
                   <div>
                     <h3 style={{ fontSize: 15, margin: '6px 0' }}>Sociodemografica</h3>
                     {Object.entries(filteredSociodemograficas).map(([nombre, datos]) => (
-                      <details key={nombre} className="reportes-accordion">
+                      <details key={nombre} className="reportes-accordion" open={Boolean(searchTerm)}>
                         <summary>
                           <span>{nombre}</span>
                           <span className="details-count">{(selecciones[nombre] || []).length}</span>
@@ -511,11 +509,10 @@ const Dashboard = () => {
 
               </div>
 
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         )}
-      </AnimatePresence>
-    </div>
+          </div>
   );
 };
 
