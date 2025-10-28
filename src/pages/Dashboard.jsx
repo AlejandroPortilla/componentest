@@ -245,8 +245,8 @@ const Dashboard = () => {
                       </div>
                     </div>
 
-                    <div className="chart-content">
-                      <div id="chart-general-cases" className="chart-wrapper">
+                    <div id="chart-general-cases" className="chart-content">
+                      <div className="chart-wrapper">
                         <ResponsiveContainer width="100%" height={360}>
                           {renderChart(chartData, generalChartType)}
                         </ResponsiveContainer>
@@ -325,8 +325,8 @@ const Dashboard = () => {
                                       <button className="chart-btn download-btn" onClick={() => descargarGrafico(`${categoriaPrincipal}-${subcategoria}`)}>📷 Descargar</button>
                                     </div>
                                   </div>
-                                  <div className="chart-content">
-                                    <div id={`chart-${categoriaPrincipal}-${subcategoria}`} className="chart-wrapper">
+                                  <div id={`chart-${categoriaPrincipal}-${subcategoria}`} className="chart-content">
+                                    <div className="chart-wrapper">
                                       <ResponsiveContainer width="100%" height={300}>
                                         {renderChart(subcategoriaData, currentType)}
                                       </ResponsiveContainer>
@@ -392,11 +392,11 @@ const Dashboard = () => {
                                         <button className="chart-btn" onClick={() => cambiarTipoGrafico(`${categoriaPrincipal}-${item}`, 'bar')}>Barras</button>
                                         {itemData.length > 1 && <button className="chart-btn" onClick={() => cambiarTipoGrafico(`${categoriaPrincipal}-${item}`, 'pie')}>Pastel</button>}
                                         {itemData.length > 1 && <button className="chart-btn" onClick={() => cambiarTipoGrafico(`${categoriaPrincipal}-${item}`, 'line')}>Línea</button>}
-                                        <button className="chart-btn download-btn" onClick={() => descargarGrafico(`${categoriaPrincipal}-${item}`)}>�� Descargar</button>
+                                        <button className="chart-btn download-btn" onClick={() => descargarGrafico(`${categoriaPrincipal}-${item}`)}>📷 Descargar</button>
                                       </div>
                                     </div>
-                                    <div className="chart-content">
-                                      <div id={`chart-${categoriaPrincipal}-${item}`} className="chart-wrapper">
+                                    <div id={`chart-${categoriaPrincipal}-${item}`} className="chart-content">
+                                      <div className="chart-wrapper">
                                         <ResponsiveContainer width="100%" height={300}>
                                           {renderChart(itemData, currentType)}
                                         </ResponsiveContainer>
