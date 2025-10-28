@@ -6,10 +6,13 @@ import {
   categorias_signos_vitales,
   categorias_sociodemograficas
 } from '../data/filters';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, LabelList } from 'recharts';
 import html2canvas from 'html2canvas';
 import "../styles/Tabla.css";
 import "../styles/Reportes.css";
+
+// Unified color palette for charts and annotations
+const CHART_COLORS = ['#2b6cb0', '#38b2ac', '#81c2ff', '#ffd080', '#7b8bf6', '#82ca9d', '#ffc658', '#ff7c7c'];
 
 // Helper function to calculate days between dates
 const calculateDaysBetween = (start, end) => {
@@ -27,10 +30,46 @@ const categoriaPrincipalMap = {
 };
 
 // Función para renderizar gráfico
-const renderChart = (data, chartType) => {
-  // Palette tuned to CSS variables (fallback hex values)
-  const COLORS = ['#2b6cb0', '#38b2ac', '#81c2ff', '#ffd080', '#7b8bf6', '#82ca9d', '#ffc658', '#ff7c7c'];
+// Custom label renderer for bars to place labels inside when space allows or above otherwise, stagger when above to avoid overlap
+const renderBarLabel = (props) => {
+  const { x, y, width, height, value, index } = props;
+  const padding = 6;
+  const fontSize = 12;
+  const text = `${value}`;
+  const centerX = x + width / 2;
+  // Determine if label fits inside the bar
+  const fitsInside = height > fontSize + padding * 2;
+  if (fitsInside) {
+    const textY = y + height / 2 + fontSize / 2 - 2;
+    return (
+      <text x={centerX} y={textY} fill="#ffffff" fontSize={fontSize} textAnchor="middle">{text}</text>
+    );
+  }
+  // If it does not fit inside, position above the bar and stagger vertically using index to reduce overlap
+  const staggerStep = 12; // px per stagger
+  const staggerGroup = (index || 0) % 3; // 0,1,2
+  const textY = (y - padding) - (staggerGroup * staggerStep);
+  // Ensure text is not drawn off the top (keep at least fontSize + padding)
+  const minY = fontSize + padding;
+  const finalY = Math.max(minY, textY);
+  return (
+    <text x={centerX} y={finalY} fill="#334155" fontSize={fontSize} textAnchor="middle">{text}</text>
+  );
+};
 
+// Custom label renderer for line points to avoid clipping at top
+const renderLineLabel = (props) => {
+  const { x, y, value } = props;
+  const fontSize = 12;
+  const topPadding = 6;
+  // If the label would be too close to the top, render below the point instead
+  const textY = y < fontSize + topPadding ? (y + 14) : (y - 6);
+  return (
+    <text x={x} y={textY} fill="#334155" fontSize={fontSize} textAnchor="middle">{value}</text>
+  );
+};
+
+const renderChart = (data, chartType) => {
   switch (chartType) {
     case 'pie': {
       // compact pie settings: smaller radii, percentage-only labels, spaced slices
@@ -49,11 +88,10 @@ const renderChart = (data, chartType) => {
             dataKey="value"
           >
             {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
             ))}
           </Pie>
           <Tooltip formatter={(value, name) => [value, name]} />
-          <Legend layout="horizontal" verticalAlign="bottom" formatter={(value) => (typeof value === 'string' && value.length > 20 ? value.slice(0, 17) + '…' : value)} />
         </PieChart>
       );
     }
@@ -71,8 +109,9 @@ const renderChart = (data, chartType) => {
           />
           <YAxis tick={{ fontSize: 12 }} />
           <Tooltip />
-          <Legend verticalAlign="top" />
-          <Line type="monotone" dataKey="value" stroke={COLORS[0]} strokeWidth={2.2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+          <Line type="monotone" dataKey="value" stroke={CHART_COLORS[0]} strokeWidth={2.2} dot={{ r: 3 }} activeDot={{ r: 5 }}>
+            <LabelList dataKey="value" content={renderLineLabel} />
+          </Line>
         </LineChart>
       );
     }
@@ -98,13 +137,14 @@ const renderChart = (data, chartType) => {
               fontSize: '13px'
             }}
           />
-          <Legend />
           <Bar
             dataKey="value"
-            fill={COLORS[1]}
+            fill={CHART_COLORS[1]}
             radius={[6, 6, 4, 4]}
             barSize={Math.max(40, Math.min(100, Math.floor(600 / Math.max(1, data.length))))}
-          />
+          >
+            <LabelList dataKey="value" content={renderBarLabel} />
+          </Bar>
         </BarChart>
       );
   }
@@ -244,12 +284,31 @@ const Dashboard = () => {
                       </div>
                     </div>
 
-                    <div className="chart-content">
-                      <div id="chart-general-cases" className="chart-wrapper">
+                    <div id="chart-general-cases" className="chart-content">
+                      <div className="chart-wrapper">
                         <ResponsiveContainer width="100%" height={360}>
                           {renderChart(chartData, generalChartType)}
                         </ResponsiveContainer>
                       </div>
+                      {generalChartType === 'pie' && (() => {
+                        const total = chartData.reduce((sum, d) => sum + (d.value || 0), 0);
+                        return (
+                          <div className="chart-annotations">
+                            <ul className="pie-legend-list">
+                              {chartData.map((d, idx) => {
+                                const pct = total ? Math.round(((d.value || 0) * 100) / total) : 0;
+                                return (
+                                  <li key={d.name || idx} className="pie-legend-item">
+                                    <span className={`pie-legend-dot color-dot-${idx % CHART_COLORS.length}`} />
+                                    <span className="pie-legend-text">{d.name}</span>
+                                    <span className="pie-legend-value">{pct}%</span>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
 
@@ -305,12 +364,31 @@ const Dashboard = () => {
                                       <button className="chart-btn download-btn" onClick={() => descargarGrafico(`${categoriaPrincipal}-${subcategoria}`)}>📷 Descargar</button>
                                     </div>
                                   </div>
-                                  <div className="chart-content">
-                                    <div id={`chart-${categoriaPrincipal}-${subcategoria}`} className="chart-wrapper">
+                                  <div id={`chart-${categoriaPrincipal}-${subcategoria}`} className="chart-content">
+                                    <div className="chart-wrapper">
                                       <ResponsiveContainer width="100%" height={300}>
                                         {renderChart(subcategoriaData, currentType)}
                                       </ResponsiveContainer>
                                     </div>
+                                    {currentType === 'pie' && (() => {
+                                      const total = subcategoriaData.reduce((sum, d) => sum + (d.value || 0), 0);
+                                      return (
+                                        <div className="chart-annotations">
+                                          <ul className="pie-legend-list">
+                                            {subcategoriaData.map((d, idx) => {
+                                              const pct = total ? Math.round(((d.value || 0) * 100) / total) : 0;
+                                              return (
+                                                <li key={d.name || idx} className="pie-legend-item">
+                                                  <span className={`pie-legend-dot color-dot-${idx % CHART_COLORS.length}`} />
+                                                  <span className="pie-legend-text">{d.name}</span>
+                                                  <span className="pie-legend-value">{pct}%</span>
+                                                </li>
+                                              );
+                                            })}
+                                          </ul>
+                                        </div>
+                                      );
+                                    })()}
                                   </div>
                                 </div>
                               );
@@ -356,12 +434,31 @@ const Dashboard = () => {
                                         <button className="chart-btn download-btn" onClick={() => descargarGrafico(`${categoriaPrincipal}-${item}`)}>📷 Descargar</button>
                                       </div>
                                     </div>
-                                    <div className="chart-content">
-                                      <div id={`chart-${categoriaPrincipal}-${item}`} className="chart-wrapper">
+                                    <div id={`chart-${categoriaPrincipal}-${item}`} className="chart-content">
+                                      <div className="chart-wrapper">
                                         <ResponsiveContainer width="100%" height={300}>
                                           {renderChart(itemData, currentType)}
                                         </ResponsiveContainer>
                                       </div>
+                                      {currentType === 'pie' && (() => {
+                                        const total = itemData.reduce((sum, d) => sum + (d.value || 0), 0);
+                                        return (
+                                          <div className="chart-annotations">
+                                            <ul className="pie-legend-list">
+                                              {itemData.map((d, idx) => {
+                                                const pct = total ? Math.round(((d.value || 0) * 100) / total) : 0;
+                                                return (
+                                                  <li key={d.name || idx} className="pie-legend-item">
+                                                    <span className={`pie-legend-dot color-dot-${idx % CHART_COLORS.length}`} />
+                                                    <span className="pie-legend-text">{d.name}</span>
+                                                    <span className="pie-legend-value">{pct}%</span>
+                                                  </li>
+                                                );
+                                              })}
+                                            </ul>
+                                          </div>
+                                        );
+                                      })()}
                                     </div>
                                   </div>
                                 );
