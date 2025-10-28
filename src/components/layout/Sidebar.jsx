@@ -8,8 +8,7 @@ const Sidebar = () => {
   const { isCollapsed } = useSidebar();
   const topMenuItems = [
     { name: 'Dashboard', icon: <FaTachometerAlt />, path: '/dashboard' },
-    { name: 'Historial', icon: <FaHistory />, path: '/historial' },
-    { name: 'Reportes', icon: <FaChartBar />, path: '/reportes' }
+    { name: 'Historial', icon: <FaHistory />, path: '/historial' }
   ];
 
   const bottomMenuItems = [

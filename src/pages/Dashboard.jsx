@@ -8,6 +8,7 @@ import {
 } from '../data/filters';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, LabelList } from 'recharts';
 import html2canvas from 'html2canvas';
+import * as XLSX from "xlsx";
 import "../styles/Tabla.css";
 import "../styles/Reportes.css";
 
@@ -206,6 +207,20 @@ const Dashboard = () => {
       link.href = canvas.toDataURL('image/png');
       link.click();
     }
+  };
+
+  const generarReporte = () => {
+    const datos = [];
+    for (const [categoria, items] of Object.entries(selecciones)) {
+      items.forEach((item) => {
+        datos.push({ Categoria: categoria, Resultado: item });
+      });
+    }
+
+    const ws = XLSX.utils.json_to_sheet(datos);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Reporte");
+    XLSX.writeFile(wb, "reporte.xlsx");
   };
 
   const filterCategories = (categories) => {
@@ -617,7 +632,7 @@ const Dashboard = () => {
 
                 <div className="modal-actions">
                   <button className="btn" onClick={() => { setSelecciones({}); }}>Limpiar</button>
-                  <button className="btn" onClick={() => { guardarHistorial(selecciones); setIsModalOpen(false); window.location.href = '/reportes'; }}>Aplicar en Reportes</button>
+                  <button className="btn" onClick={() => { generarReporte(); }}>Generar Reporte en Excel</button>
                 </div>
 
               </div>
