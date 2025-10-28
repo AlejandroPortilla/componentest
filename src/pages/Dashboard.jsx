@@ -30,6 +30,34 @@ const categoriaPrincipalMap = {
 };
 
 // Función para renderizar gráfico
+// Custom label renderer for bars to place labels inside when space allows or above otherwise
+const renderBarLabel = (props) => {
+  const { x, y, width, height, value } = props;
+  const padding = 6;
+  const fontSize = 12;
+  const text = `${value}`;
+  const centerX = x + width / 2;
+  // Determine if label fits inside the bar
+  const fitsInside = height > fontSize + padding * 2;
+  const textY = fitsInside ? (y + height / 2 + fontSize / 2 - 2) : (y - padding);
+  const fill = fitsInside ? '#ffffff' : '#334155';
+  return (
+    <text x={centerX} y={textY} fill={fill} fontSize={fontSize} textAnchor="middle">{text}</text>
+  );
+};
+
+// Custom label renderer for line points to avoid clipping at top
+const renderLineLabel = (props) => {
+  const { x, y, value } = props;
+  const fontSize = 12;
+  const topPadding = 6;
+  // If the label would be too close to the top, render below the point instead
+  const textY = y < fontSize + topPadding ? (y + 14) : (y - 6);
+  return (
+    <text x={x} y={textY} fill="#334155" fontSize={fontSize} textAnchor="middle">{value}</text>
+  );
+};
+
 const renderChart = (data, chartType) => {
   switch (chartType) {
     case 'pie': {
@@ -71,7 +99,7 @@ const renderChart = (data, chartType) => {
           <YAxis tick={{ fontSize: 12 }} />
           <Tooltip />
           <Line type="monotone" dataKey="value" stroke={CHART_COLORS[0]} strokeWidth={2.2} dot={{ r: 3 }} activeDot={{ r: 5 }}>
-            <LabelList dataKey="value" position="top" />
+            <LabelList dataKey="value" content={renderLineLabel} />
           </Line>
         </LineChart>
       );
@@ -104,7 +132,7 @@ const renderChart = (data, chartType) => {
             radius={[6, 6, 4, 4]}
             barSize={Math.max(40, Math.min(100, Math.floor(600 / Math.max(1, data.length))))}
           >
-            <LabelList dataKey="value" position="top" />
+            <LabelList dataKey="value" content={renderBarLabel} />
           </Bar>
         </BarChart>
       );
