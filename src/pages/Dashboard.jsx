@@ -85,23 +85,29 @@ const renderDonutLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent 
 };
 
 const renderChart = (data, chartType) => {
+  // defensive: ensure array
+  const list = Array.isArray(data) ? data : [];
+  // compute label metrics to decide rotations and sizing
+  const maxLabelLength = list.reduce((m, d) => Math.max(m, String(d.name || '').length), 0);
+  const count = list.length;
+
   switch (chartType) {
     case 'pie': {
-      // donut with larger ring and internal percentage labels
+      // donut with responsive ring sizes; smaller outer radius to avoid clipping
       return (
-        <PieChart>
+        <PieChart margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
           <Pie
-            data={data}
+            data={list}
             cx="50%"
             cy="50%"
             labelLine={false}
             label={renderDonutLabel}
-            outerRadius={100}
-            innerRadius={68}
+            outerRadius={80}
+            innerRadius={48}
             paddingAngle={2}
             dataKey="value"
           >
-            {data.map((entry, index) => (
+            {list.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
             ))}
           </Pie>
@@ -110,14 +116,17 @@ const renderChart = (data, chartType) => {
       );
     }
     case 'line': {
+      // adjust X axis height/angle based on longest label
+      const angle = maxLabelLength > 12 ? -35 : (count > 8 ? -30 : (count > 4 ? -20 : -10));
+      const height = maxLabelLength > 12 ? 110 : (count > 8 ? 100 : (count > 4 ? 80 : 60));
       return (
-        <LineChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 30 }}>
+        <LineChart data={list} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="name"
-            angle={data.length > 4 ? -35 : -10}
-            textAnchor={data.length > 4 ? "end" : "middle"}
-            height={data.length > 4 ? 90 : 60}
+            angle={angle}
+            textAnchor={angle < 0 ? 'end' : 'middle'}
+            height={height}
             interval={0}
             tick={{ fontSize: 12, fill: '#334155' }}
           />
@@ -131,16 +140,19 @@ const renderChart = (data, chartType) => {
     }
 
     default:
+      // bar chart: rotate labels if they are long or many categories; make bottom margin larger accordingly
+      const angle = maxLabelLength > 12 ? -35 : (count > 8 ? -30 : (count > 4 ? -20 : 0));
+      const height = maxLabelLength > 12 ? 110 : (count > 8 ? 100 : (count > 4 ? 80 : 50));
       return (
-        <BarChart data={data} margin={{ top: 8, right: 12, left: 0, bottom: 40 }} barCategoryGap="20%">
+        <BarChart data={list} margin={{ top: 8, right: 12, left: 0, bottom: 8 }} barCategoryGap="18%">
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="name"
             tick={{ fontSize: 12, fill: '#334155' }}
             interval={0}
-            angle={data.length > 4 ? -35 : 0}
-            textAnchor={data.length > 4 ? "end" : "middle"}
-            height={data.length > 4 ? 80 : 50}
+            angle={angle}
+            textAnchor={angle < 0 ? 'end' : 'middle'}
+            height={height}
           />
           <YAxis tick={{ fontSize: 12 }} />
           <Tooltip
@@ -155,7 +167,7 @@ const renderChart = (data, chartType) => {
             dataKey="value"
             fill={CHART_COLORS[1]}
             radius={[6, 6, 4, 4]}
-            barSize={Math.max(40, Math.min(100, Math.floor(600 / Math.max(1, data.length))))}
+            barSize={Math.max(30, Math.min(100, Math.floor(600 / Math.max(1, count))))}
           >
             <LabelList dataKey="value" content={renderBarLabel} />
           </Bar>
@@ -173,6 +185,7 @@ const Dashboard = () => {
   const today = new Date().toISOString().split('T')[0];
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(today);
+  const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
     // prevent background scrolling when modal is open
@@ -239,12 +252,22 @@ const Dashboard = () => {
   return (
     <div className="dashboard-content">
 
-      <div className="card">
-        <h2>Dashboard Principal</h2>
-        <p>Presiona el Boton "filtros para graficos" para empezar a graficar.</p>
-        <p>Para generar el reporte en excel Presiona el boton "filtros para graficos" selecciona los que requieras
-          y presiona "Aplicar en reportes".</p>
-      </div>
+      {showIntro ? (
+        <div className="info-card">
+          <div className="info-card-content">
+            <div className="info-card-text">
+              <h2>Dashboard Principal</h2>
+              <p>Presiona el Boton "filtros para graficos" para empezar a graficar.</p>
+              <p>Para generar el reporte en excel Presiona el boton "filtros para graficos" selecciona los que requieras y presiona "Aplicar en reportes".</p>
+            </div>
+            <button className="close-btn" onClick={() => setShowIntro(false)} aria-label="Cerrar aviso">✕</button>
+          </div>
+        </div>
+      ) : (
+        <div className="show-info-wrapper">
+          <button className="show-info-btn" onClick={() => setShowIntro(true)}>Mostrar aviso</button>
+        </div>
+      )}
 
       <div className="filters-row">
         <div className="date-filters-section">
@@ -273,7 +296,7 @@ const Dashboard = () => {
 
         <div className="filters-cta-wrapper">
           <button className="btn filters-cta" onClick={() => setIsModalOpen(true)}>
-            Filtros para graficos
+            Filtros para gráficos
           </button>
         </div>
       </div>
@@ -398,7 +421,7 @@ const Dashboard = () => {
                                   </div>
                                   <div id={`chart-${categoriaPrincipal}-${subcategoria}`} className="chart-content">
                                     <div className="chart-wrapper">
-                                      <ResponsiveContainer width="100%" height={300}>
+                                      <ResponsiveContainer width="100%" height={currentType === 'pie' ? 360 : 300}>
                                         {renderChart(subcategoriaData, currentType)}
                                       </ResponsiveContainer>
                                     </div>
@@ -431,12 +454,36 @@ const Dashboard = () => {
                           <div className="sociodemografica-container">
                             {seleccionesCategoria.map(([subcategoria, items]) => {
                               if (items.length === 0) return null;
-                              const subcategoriaData = items.map((item) => ({
+
+                              // Raw data generation (placeholder)
+                              const rawSubcategoriaData = items.map((item) => ({
                                 name: item,
                                 value: Math.floor(Math.random() * 100) + 1,
                                 subcategory: subcategoria
                               }));
+
                               const currentType = chartTypes[`${categoriaPrincipal}-${subcategoria}`] || 'bar';
+
+                              // For sociodeomographic charts: aggregate small pie slices into "Otros" and sort bars
+                              const prepareSociodemData = (data, chartType) => {
+                                const list = data.map(d => ({ ...d }));
+                                if (chartType === 'pie') {
+                                  const total = list.reduce((s, d) => s + (d.value || 0), 0) || 1;
+                                  const threshold = 0.05; // 5%
+                                  const large = list.filter(d => (d.value / total) >= threshold).sort((a, b) => b.value - a.value);
+                                  const small = list.filter(d => (d.value / total) < threshold);
+                                  if (small.length > 0) {
+                                    const othersVal = small.reduce((s, d) => s + (d.value || 0), 0);
+                                    large.push({ name: 'Otros', value: othersVal });
+                                  }
+                                  return large;
+                                }
+                                if (chartType === 'bar') return list.sort((a, b) => b.value - a.value);
+                                return list;
+                              };
+
+                              const subcategoriaData = prepareSociodemData(rawSubcategoriaData, currentType);
+
                               return (
                                 <div key={`${categoriaPrincipal}-${subcategoria}`} className="subcategory-chart">
                                   <div className="chart-header">
@@ -450,7 +497,7 @@ const Dashboard = () => {
                                   </div>
                                   <div id={`chart-${categoriaPrincipal}-${subcategoria}`} className="chart-content">
                                     <div className="chart-wrapper">
-                                      <ResponsiveContainer width="100%" height={300}>
+                                      <ResponsiveContainer width="100%" height={currentType === 'pie' ? 360 : 300}>
                                         {renderChart(subcategoriaData, currentType)}
                                       </ResponsiveContainer>
                                     </div>
@@ -499,7 +546,7 @@ const Dashboard = () => {
 
               <div className="modal-header">
                 <div className="modal-title">Filtros para Gráficos</div>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <div className="modal-header-actions">
                   <button className="modal-close" onClick={() => setIsModalOpen(false)}>✕</button>
                 </div>
               </div>
@@ -513,16 +560,16 @@ const Dashboard = () => {
                   className="modal-search"
                 />
 
-                <div style={{ display: 'grid', gap: 12 }}>
+                <div className="modal-groups-grid">
                   <div>
-                    <h3 style={{ fontSize: 15, margin: '6px 0' }}>Laboratorio</h3>
+                    <h3 className="modal-subtitle">Laboratorio</h3>
                     {Object.entries(filteredLaboratorios).map(([nombre, datos]) => (
                       <details key={nombre} className="reportes-accordion" open={Boolean(searchTerm)}>
                         <summary>
                           <span>{nombre}</span>
                           <span className="details-count">{(selecciones[nombre] || []).length}</span>
                         </summary>
-                        <div style={{ padding: 8 }}>
+                        <div className="details-body-padding">
                           <TablaCategoria
                             titulo={nombre}
                             datos={datos}
@@ -537,14 +584,14 @@ const Dashboard = () => {
                   </div>
 
                   <div>
-                    <h3 style={{ fontSize: 15, margin: '6px 0' }}>Clínicas</h3>
+                    <h3 className="modal-subtitle">Clínicas</h3>
                     {Object.entries(filteredSignos).map(([nombre, datos]) => (
                       <details key={nombre} className="reportes-accordion" open={Boolean(searchTerm)}>
                         <summary>
                           <span>{nombre}</span>
                           <span className="details-count">{(selecciones[nombre] || []).length}</span>
                         </summary>
-                        <div style={{ padding: 8 }}>
+                        <div className="details-body-padding">
                           <TablaCategoria
                             titulo={nombre}
                             datos={datos}
@@ -559,14 +606,14 @@ const Dashboard = () => {
                   </div>
 
                   <div>
-                    <h3 style={{ fontSize: 15, margin: '6px 0' }}>Sociodemografica</h3>
+                    <h3 className="modal-subtitle">Sociodemografica</h3>
                     {Object.entries(filteredSociodemograficas).map(([nombre, datos]) => (
                       <details key={nombre} className="reportes-accordion" open={Boolean(searchTerm)}>
                         <summary>
                           <span>{nombre}</span>
                           <span className="details-count">{(selecciones[nombre] || []).length}</span>
                         </summary>
-                        <div style={{ padding: 8 }}>
+                        <div className="details-body-padding">
                           <TablaCategoria
                             titulo={nombre}
                             datos={datos}
@@ -586,7 +633,7 @@ const Dashboard = () => {
                 <div className="modal-selected-title">Seleccionados</div>
                 <div className="selected-box">
                   {Object.entries(selecciones).flatMap(([cat, items]) => items.map((it) => ({ cat, it }))).length === 0 ? (
-                    <div style={{ color: '#6c757d' }}>Ninguno</div>
+                    <div className="empty-selected-hint">Ninguno</div>
                   ) : (
                     Object.entries(selecciones).flatMap(([cat, items]) => items.map((it) => ({ cat, it }))).map((s, idx) => (
                       <div key={idx} className="chip">{s.it} <button className="remove" onClick={() => {
