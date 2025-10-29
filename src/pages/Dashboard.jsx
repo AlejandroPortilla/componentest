@@ -173,6 +173,7 @@ const Dashboard = () => {
   const today = new Date().toISOString().split('T')[0];
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(today);
+  const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
     // prevent background scrolling when modal is open
@@ -239,12 +240,17 @@ const Dashboard = () => {
   return (
     <div className="dashboard-content">
 
-      <div className="card">
-        <h2>Dashboard Principal</h2>
-        <p>Presiona el Boton "filtros para graficos" para empezar a graficar.</p>
-        <p>Para generar el reporte en excel Presiona el boton "filtros para graficos" selecciona los que requieras
-          y presiona "Aplicar en reportes".</p>
-      </div>
+      {showIntro && (
+        <div className="info-banner">
+          <div className="info-banner-content">
+            <div className="info-text">
+              <h2 className="info-title">Bienvenido al tablero</h2>
+              <p className="info-description">1) Selecciona un rango de fechas. 2) Abre "Filtros para gráficos" y elige las variables. 3) Visualiza las gráficas y descarga el reporte en Excel.</p>
+            </div>
+            <button className="info-dismiss" onClick={() => setShowIntro(false)} aria-label="Cerrar aviso">✕</button>
+          </div>
+        </div>
+      )}
 
       <div className="filters-row">
         <div className="date-filters-section">
@@ -273,7 +279,7 @@ const Dashboard = () => {
 
         <div className="filters-cta-wrapper">
           <button className="btn filters-cta" onClick={() => setIsModalOpen(true)}>
-            Filtros para graficos
+            Filtros para gráficos
           </button>
         </div>
       </div>
@@ -499,7 +505,7 @@ const Dashboard = () => {
 
               <div className="modal-header">
                 <div className="modal-title">Filtros para Gráficos</div>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <div className="modal-header-actions">
                   <button className="modal-close" onClick={() => setIsModalOpen(false)}>✕</button>
                 </div>
               </div>
@@ -513,16 +519,16 @@ const Dashboard = () => {
                   className="modal-search"
                 />
 
-                <div style={{ display: 'grid', gap: 12 }}>
+                <div className="modal-groups-grid">
                   <div>
-                    <h3 style={{ fontSize: 15, margin: '6px 0' }}>Laboratorio</h3>
+                    <h3 className="modal-subtitle">Laboratorio</h3>
                     {Object.entries(filteredLaboratorios).map(([nombre, datos]) => (
                       <details key={nombre} className="reportes-accordion" open={Boolean(searchTerm)}>
                         <summary>
                           <span>{nombre}</span>
                           <span className="details-count">{(selecciones[nombre] || []).length}</span>
                         </summary>
-                        <div style={{ padding: 8 }}>
+                        <div className="details-body-padding">
                           <TablaCategoria
                             titulo={nombre}
                             datos={datos}
@@ -537,14 +543,14 @@ const Dashboard = () => {
                   </div>
 
                   <div>
-                    <h3 style={{ fontSize: 15, margin: '6px 0' }}>Clínicas</h3>
+                    <h3 className="modal-subtitle">Clínicas</h3>
                     {Object.entries(filteredSignos).map(([nombre, datos]) => (
                       <details key={nombre} className="reportes-accordion" open={Boolean(searchTerm)}>
                         <summary>
                           <span>{nombre}</span>
                           <span className="details-count">{(selecciones[nombre] || []).length}</span>
                         </summary>
-                        <div style={{ padding: 8 }}>
+                        <div className="details-body-padding">
                           <TablaCategoria
                             titulo={nombre}
                             datos={datos}
@@ -559,14 +565,14 @@ const Dashboard = () => {
                   </div>
 
                   <div>
-                    <h3 style={{ fontSize: 15, margin: '6px 0' }}>Sociodemografica</h3>
+                    <h3 className="modal-subtitle">Sociodemografica</h3>
                     {Object.entries(filteredSociodemograficas).map(([nombre, datos]) => (
                       <details key={nombre} className="reportes-accordion" open={Boolean(searchTerm)}>
                         <summary>
                           <span>{nombre}</span>
                           <span className="details-count">{(selecciones[nombre] || []).length}</span>
                         </summary>
-                        <div style={{ padding: 8 }}>
+                        <div className="details-body-padding">
                           <TablaCategoria
                             titulo={nombre}
                             datos={datos}
@@ -586,7 +592,7 @@ const Dashboard = () => {
                 <div className="modal-selected-title">Seleccionados</div>
                 <div className="selected-box">
                   {Object.entries(selecciones).flatMap(([cat, items]) => items.map((it) => ({ cat, it }))).length === 0 ? (
-                    <div style={{ color: '#6c757d' }}>Ninguno</div>
+                    <div className="empty-selected-hint">Ninguno</div>
                   ) : (
                     Object.entries(selecciones).flatMap(([cat, items]) => items.map((it) => ({ cat, it }))).map((s, idx) => (
                       <div key={idx} className="chip">{s.it} <button className="remove" onClick={() => {
