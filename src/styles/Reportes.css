@@ -763,3 +763,44 @@ details.reportes-accordion[open] {
 .modal-subtitle { font-size: 15px; margin: 6px 0; }
 .details-body-padding { padding: 8px; }
 .empty-selected-hint { color: #6c757d; }
+
+/* Info card (reverted to original copy but improved typography) */
+.info-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 18px 20px;
+  max-width: 920px;
+  margin: 0 auto 18px auto;
+  box-shadow: 0 8px 26px rgba(2,6,23,0.06);
+  border: 1px solid rgba(15,23,42,0.04);
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+.info-card-content { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.info-card-text h2 { margin: 0 0 8px 0; font-size: 20px; color: #102a43; }
+.info-card-text p { margin: 0 0 8px 0; color: #334155; font-size: 15px; line-height: 1.6; }
+
+.close-btn {
+  background: none;
+  border: 1px solid rgba(15,23,42,0.06);
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #475569;
+  height: 40px;
+  align-self: start;
+}
+
+.close-btn:hover { background: rgba(15,23,42,0.03); transform: translateY(-2px); }
+
+.show-info-wrapper { max-width: 920px; margin: 0 auto 18px auto; display: flex; justify-content: flex-end; }
+.show-info-btn {
+  background: transparent;
+  border: 1px dashed rgba(15,23,42,0.08);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #0f172a;
+  font-weight: 600;
+}
+.show-info-btn:hover { background: rgba(15,23,42,0.02); transform: translateY(-2px); }
