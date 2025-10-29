@@ -253,12 +253,24 @@ details.reportes-accordion[open] {
   padding: 16px;
   border: 1px solid #e9ecef;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-height: 380px; /* ensure pies have room */
+  display: flex;
+  flex-direction: column;
 }
 
 .subcategory-chart:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
+
+.subcategory-chart .chart-wrapper {
+  min-height: 320px; /* force internal wrapper larger to avoid clipping */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-annotations { align-self: center; }
 
 .sociodemografica-container {
   display: grid;
