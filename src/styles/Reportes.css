@@ -409,6 +409,8 @@ details.reportes-accordion[open] {
   font-size: 11px;
   white-space: pre-wrap;
   word-break: break-word;
+  /* allow longer labels to wrap, center them vertically */
+  dominant-baseline: hanging;
 }
 
 .recharts-legend-item text {
