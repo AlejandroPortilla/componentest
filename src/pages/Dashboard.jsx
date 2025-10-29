@@ -421,7 +421,7 @@ const Dashboard = () => {
                                   </div>
                                   <div id={`chart-${categoriaPrincipal}-${subcategoria}`} className="chart-content">
                                     <div className="chart-wrapper">
-                                      <ResponsiveContainer width="100%" height={300}>
+                                      <ResponsiveContainer width="100%" height={currentType === 'pie' ? 360 : 300}>
                                         {renderChart(subcategoriaData, currentType)}
                                       </ResponsiveContainer>
                                     </div>
@@ -497,7 +497,7 @@ const Dashboard = () => {
                                   </div>
                                   <div id={`chart-${categoriaPrincipal}-${subcategoria}`} className="chart-content">
                                     <div className="chart-wrapper">
-                                      <ResponsiveContainer width="100%" height={300}>
+                                      <ResponsiveContainer width="100%" height={currentType === 'pie' ? 360 : 300}>
                                         {renderChart(subcategoriaData, currentType)}
                                       </ResponsiveContainer>
                                     </div>
