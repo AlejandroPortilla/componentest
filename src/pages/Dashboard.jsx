@@ -170,8 +170,9 @@ const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [chartTypes, setChartTypes] = useState({});
   const [generalChartType, setGeneralChartType] = useState('bar');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const today = new Date().toISOString().split('T')[0];
+  const [startDate, setStartDate] = useState(today);
+  const [endDate, setEndDate] = useState(today);
 
   useEffect(() => {
     // prevent background scrolling when modal is open
@@ -426,89 +427,56 @@ const Dashboard = () => {
                             })}
                           </div>
                         ) : categoriaPrincipal === 'Sociodemografica' ? (
-                          // Para Sociodemografica, mostrar todos los items en un solo contenedor
+                          // Para Sociodemografica, mostrar subcategorías como en Clinicas y Laboratorio
                           <div className="sociodemografica-container">
-                            {(() => {
-                              const allItems = [];
-                              seleccionesCategoria.forEach(([subcategoria, items]) => {
-                                items.forEach((item) => {
-                                  allItems.push({ item, subcategoria });
-                                });
-                              });
-                              // Agrupar items relacionados (fecha de ingreso y egreso)
-                              const groupedItems = allItems.reduce((acc, { item, subcategoria }) => {
-                                if (item.toLowerCase().includes('fecha')) {
-                                  if (!acc.fechas) acc.fechas = [];
-                                  acc.fechas.push({ item, subcategoria });
-                                } else {
-                                  if (!acc.otros) acc.otros = [];
-                                  acc.otros.push({ item, subcategoria });
-                                }
-                                return acc;
-                              }, {});
-
-                              const renderItemChart = ({ item, subcategoria }) => {
-                                const itemData = [{
-                                  name: item,
-                                  value: Math.floor(Math.random() * 100) + 1,
-                                  subcategory: subcategoria
-                                }];
-                                const currentType = chartTypes[`${categoriaPrincipal}-${item}`] || 'bar';
-                                return (
-                                  <div key={`${categoriaPrincipal}-${item}`} className="item-chart">
-                                    <div className="chart-header">
-                                      <h4>{item}</h4>
-                                      <div className="chart-controls">
-                                        <button className="chart-btn" onClick={() => cambiarTipoGrafico(`${categoriaPrincipal}-${item}`, 'bar')}>Barras</button>
-                                        {itemData.length > 1 && <button className="chart-btn" onClick={() => cambiarTipoGrafico(`${categoriaPrincipal}-${item}`, 'pie')}>Pastel</button>}
-                                        {itemData.length > 1 && <button className="chart-btn" onClick={() => cambiarTipoGrafico(`${categoriaPrincipal}-${item}`, 'line')}>Línea</button>}
-                                        <button className="chart-btn download-btn" onClick={() => descargarGrafico(`${categoriaPrincipal}-${item}`)}>📷 Descargar</button>
-                                      </div>
-                                    </div>
-                                    <div id={`chart-${categoriaPrincipal}-${item}`} className="chart-content">
-                                      <div className="chart-wrapper">
-                                        <ResponsiveContainer width="100%" height={300}>
-                                          {renderChart(itemData, currentType)}
-                                        </ResponsiveContainer>
-                                      </div>
-                                      {currentType === 'pie' && (() => {
-                                        const total = itemData.reduce((sum, d) => sum + (d.value || 0), 0);
-                                        return (
-                                          <div className="chart-annotations">
-                                            <ul className="pie-legend-list">
-                                              {itemData.map((d, idx) => {
-                                                const pct = total ? Math.round(((d.value || 0) * 100) / total) : 0;
-                                                return (
-                                                  <li key={d.name || idx} className="pie-legend-item">
-                                                    <span className={`pie-legend-dot color-dot-${idx % CHART_COLORS.length}`} />
-                                                    <span className="pie-legend-text">{d.name}</span>
-                                                    <span className="pie-legend-value">{pct}%</span>
-                                                  </li>
-                                                );
-                                              })}
-                                            </ul>
-                                          </div>
-                                        );
-                                      })()}
+                            {seleccionesCategoria.map(([subcategoria, items]) => {
+                              if (items.length === 0) return null;
+                              const subcategoriaData = items.map((item) => ({
+                                name: item,
+                                value: Math.floor(Math.random() * 100) + 1,
+                                subcategory: subcategoria
+                              }));
+                              const currentType = chartTypes[`${categoriaPrincipal}-${subcategoria}`] || 'bar';
+                              return (
+                                <div key={`${categoriaPrincipal}-${subcategoria}`} className="subcategory-chart">
+                                  <div className="chart-header">
+                                    <h4>{subcategoria}</h4>
+                                    <div className="chart-controls">
+                                      <button className="chart-btn" onClick={() => cambiarTipoGrafico(`${categoriaPrincipal}-${subcategoria}`, 'bar')}>Barras</button>
+                                      {subcategoriaData.length > 1 && <button className="chart-btn" onClick={() => cambiarTipoGrafico(`${categoriaPrincipal}-${subcategoria}`, 'pie')}>Pastel</button>}
+                                      {subcategoriaData.length > 1 && <button className="chart-btn" onClick={() => cambiarTipoGrafico(`${categoriaPrincipal}-${subcategoria}`, 'line')}>Línea</button>}
+                                      <button className="chart-btn download-btn" onClick={() => descargarGrafico(`${categoriaPrincipal}-${subcategoria}`)}>📷 Descargar</button>
                                     </div>
                                   </div>
-                                );
-                              };
-
-                              return (
-                                <>
-                                  {groupedItems.fechas && groupedItems.fechas.length > 0 && (
-                                    <div className="fecha-group">
-                                      <h4>Fechas</h4>
-                                      <div className="fecha-charts">
-                                        {groupedItems.fechas.map(renderItemChart)}
-                                      </div>
+                                  <div id={`chart-${categoriaPrincipal}-${subcategoria}`} className="chart-content">
+                                    <div className="chart-wrapper">
+                                      <ResponsiveContainer width="100%" height={300}>
+                                        {renderChart(subcategoriaData, currentType)}
+                                      </ResponsiveContainer>
                                     </div>
-                                  )}
-                                  {groupedItems.otros && groupedItems.otros.map(renderItemChart)}
-                                </>
+                                    {currentType === 'pie' && (() => {
+                                      const total = subcategoriaData.reduce((sum, d) => sum + (d.value || 0), 0);
+                                      return (
+                                        <div className="chart-annotations">
+                                          <ul className="pie-legend-list">
+                                            {subcategoriaData.map((d, idx) => {
+                                              const pct = total ? Math.round(((d.value || 0) * 100) / total) : 0;
+                                              return (
+                                                <li key={d.name || idx} className="pie-legend-item">
+                                                  <span className={`pie-legend-dot color-dot-${idx % CHART_COLORS.length}`} />
+                                                  <span className="pie-legend-text">{d.name}</span>
+                                                  <span className="pie-legend-value">{pct}%</span>
+                                                </li>
+                                              );
+                                            })}
+                                          </ul>
+                                        </div>
+                                      );
+                                    })()}
+                                  </div>
+                                </div>
                               );
-                            })()}
+                            })}
                           </div>
                         ) : null
                       ) : (

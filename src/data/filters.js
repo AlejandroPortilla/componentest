@@ -1,5 +1,5 @@
 export const categorias_laboratorios = {
-  "ELECTROLITOS": [
+  "Electrolitos": [
     "hipocalcemia",
     "hipercalcemia",
     "hipokalemia",
@@ -12,13 +12,13 @@ export const categorias_laboratorios = {
     "hiperfosfatemia",
     "hipermagnesemia"
   ],
-  "METABOLISMO": [
+  "Metabolismo": [
     "hiperglicemia",
     "hiperglucemia",
     "hiperlactatemia",
     "lactato elevado"
   ],
-  "GASES Y VENTILACIÓN": [
+  "Gases y Ventilación": [
     "acidemia",
     "alcalemia",
     "acidosis",
@@ -29,7 +29,7 @@ export const categorias_laboratorios = {
     "sindrome de distres respiratorio",
     "distres respiratorio"
   ],
-  "HEMATOLOGÍA": [
+  "Hematología": [
     "anemia",
     "leucopenia",
     "agranulocitosis",
@@ -37,31 +37,31 @@ export const categorias_laboratorios = {
     "trombocitopenia",
     "trombocitosis"
   ],
-  "COAGULACIÓN": [
+  "Coagulación": [
     "coagulopatia",
     "anticoagulacion excesiva"
   ],
-  "CORAZÓN": [
+  "Corazón": [
     "lesion miocardica",
     "infarto",
     "necrosis miocardica",
     "insuficiencia cardiaca",
     "disfuncion ventricular"
   ],
-  "INFLAMACIÓN Y SEPSIS": [
+  "Inflamación y Sepsis": [
     "infeccion bacteriana",
     "sepsis",
     "shock septico"
   ],
-  "PERFUSIÓN TISULAR Y SHOCK": [
+  "Perfusión Tisular y shock": [
     "hipoperfusion",
     "shock hipovolemico"
   ],
-  "INFLAMACIÓN SISTÉMICA AVANZADA": [
+  "Inflamación Sistémica Avanzada": [
     "sindrome de hiperinflamacion",
     "respuesta inflamatoria sistemica"
   ],
-  "COAGULACIÓN / TROMBOSIS": [
+  "Coagulación / Trombosis": [
     "trombosis",
     "coagulacion intravascular diseminada"
   ]
@@ -91,23 +91,34 @@ export const categorias_signos_vitales = {
     "PaO2",
     "FiO2",
     "PAM",
-    "Llenado Capilar Promedio",
+    "Llenado Capilar",
     "Temperatura ",
     "pH",
 
 
   ],
-  "Antecedentes":[
-    "Antecedentes Familiares",
+  "Antecedentes Personales":[
     "Antecedentes Personales",
   ],
 };
 
 export const categorias_sociodemograficas = {
+
+  "Edad":[
+    "Adulto Joven(18-24)",
+    "Adulto(25-59)",
+    "Adulto Mayor(60-79)",
+    "Vejez(80+)",
+
+  ],
+  "Genero": [
+    "Masculino",
+    "Femenino"
+  ],
+  "Procedencia": [
+    "Urbano",
+  ],
   "Sociodemografica": [
-    "Edad",
-    "Genero",
-    "Procedencia",
     "Etnia",
     "Ocupacion",
     "Escolaridad",
@@ -116,6 +127,6 @@ export const categorias_sociodemograficas = {
     "Condicion de egreso",
     "Regimen de Salud",
     "Comorbilidad",
-    
+
   ],
 };
