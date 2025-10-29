@@ -240,15 +240,20 @@ const Dashboard = () => {
   return (
     <div className="dashboard-content">
 
-      {showIntro && (
-        <div className="info-banner">
-          <div className="info-banner-content">
-            <div className="info-text">
-              <h2 className="info-title">Bienvenido al tablero</h2>
-              <p className="info-description">1) Selecciona un rango de fechas. 2) Abre "Filtros para gráficos" y elige las variables. 3) Visualiza las gráficas y descarga el reporte en Excel.</p>
+      {showIntro ? (
+        <div className="info-card">
+          <div className="info-card-content">
+            <div className="info-card-text">
+              <h2>Dashboard Principal</h2>
+              <p>Presiona el Boton "filtros para graficos" para empezar a graficar.</p>
+              <p>Para generar el reporte en excel Presiona el boton "filtros para graficos" selecciona los que requieras y presiona "Aplicar en reportes".</p>
             </div>
-            <button className="info-dismiss" onClick={() => setShowIntro(false)} aria-label="Cerrar aviso">✕</button>
+            <button className="close-btn" onClick={() => setShowIntro(false)} aria-label="Cerrar aviso">✕</button>
           </div>
+        </div>
+      ) : (
+        <div className="show-info-wrapper">
+          <button className="show-info-btn" onClick={() => setShowIntro(true)}>Mostrar aviso</button>
         </div>
       )}
 
