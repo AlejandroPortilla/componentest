@@ -442,12 +442,36 @@ const Dashboard = () => {
                           <div className="sociodemografica-container">
                             {seleccionesCategoria.map(([subcategoria, items]) => {
                               if (items.length === 0) return null;
-                              const subcategoriaData = items.map((item) => ({
+
+                              // Raw data generation (placeholder)
+                              const rawSubcategoriaData = items.map((item) => ({
                                 name: item,
                                 value: Math.floor(Math.random() * 100) + 1,
                                 subcategory: subcategoria
                               }));
+
                               const currentType = chartTypes[`${categoriaPrincipal}-${subcategoria}`] || 'bar';
+
+                              // For sociodeomographic charts: aggregate small pie slices into "Otros" and sort bars
+                              const prepareSociodemData = (data, chartType) => {
+                                const list = data.map(d => ({ ...d }));
+                                if (chartType === 'pie') {
+                                  const total = list.reduce((s, d) => s + (d.value || 0), 0) || 1;
+                                  const threshold = 0.05; // 5%
+                                  const large = list.filter(d => (d.value / total) >= threshold).sort((a, b) => b.value - a.value);
+                                  const small = list.filter(d => (d.value / total) < threshold);
+                                  if (small.length > 0) {
+                                    const othersVal = small.reduce((s, d) => s + (d.value || 0), 0);
+                                    large.push({ name: 'Otros', value: othersVal });
+                                  }
+                                  return large;
+                                }
+                                if (chartType === 'bar') return list.sort((a, b) => b.value - a.value);
+                                return list;
+                              };
+
+                              const subcategoriaData = prepareSociodemData(rawSubcategoriaData, currentType);
+
                               return (
                                 <div key={`${categoriaPrincipal}-${subcategoria}`} className="subcategory-chart">
                                   <div className="chart-header">
