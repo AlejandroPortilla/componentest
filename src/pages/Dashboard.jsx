@@ -85,23 +85,29 @@ const renderDonutLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent 
 };
 
 const renderChart = (data, chartType) => {
+  // defensive: ensure array
+  const list = Array.isArray(data) ? data : [];
+  // compute label metrics to decide rotations and sizing
+  const maxLabelLength = list.reduce((m, d) => Math.max(m, String(d.name || '').length), 0);
+  const count = list.length;
+
   switch (chartType) {
     case 'pie': {
-      // donut with larger ring and internal percentage labels
+      // donut with responsive ring sizes; smaller outer radius to avoid clipping
       return (
-        <PieChart>
+        <PieChart margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
           <Pie
-            data={data}
+            data={list}
             cx="50%"
             cy="50%"
             labelLine={false}
             label={renderDonutLabel}
-            outerRadius={100}
-            innerRadius={68}
+            outerRadius={80}
+            innerRadius={48}
             paddingAngle={2}
             dataKey="value"
           >
-            {data.map((entry, index) => (
+            {list.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
             ))}
           </Pie>
@@ -110,14 +116,17 @@ const renderChart = (data, chartType) => {
       );
     }
     case 'line': {
+      // adjust X axis height/angle based on longest label
+      const angle = maxLabelLength > 12 ? -35 : (count > 8 ? -30 : (count > 4 ? -20 : -10));
+      const height = maxLabelLength > 12 ? 110 : (count > 8 ? 100 : (count > 4 ? 80 : 60));
       return (
-        <LineChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 30 }}>
+        <LineChart data={list} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="name"
-            angle={data.length > 4 ? -35 : -10}
-            textAnchor={data.length > 4 ? "end" : "middle"}
-            height={data.length > 4 ? 90 : 60}
+            angle={angle}
+            textAnchor={angle < 0 ? 'end' : 'middle'}
+            height={height}
             interval={0}
             tick={{ fontSize: 12, fill: '#334155' }}
           />
@@ -131,16 +140,19 @@ const renderChart = (data, chartType) => {
     }
 
     default:
+      // bar chart: rotate labels if they are long or many categories; make bottom margin larger accordingly
+      const angle = maxLabelLength > 12 ? -35 : (count > 8 ? -30 : (count > 4 ? -20 : 0));
+      const height = maxLabelLength > 12 ? 110 : (count > 8 ? 100 : (count > 4 ? 80 : 50));
       return (
-        <BarChart data={data} margin={{ top: 8, right: 12, left: 0, bottom: 40 }} barCategoryGap="20%">
+        <BarChart data={list} margin={{ top: 8, right: 12, left: 0, bottom: 8 }} barCategoryGap="18%">
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="name"
             tick={{ fontSize: 12, fill: '#334155' }}
             interval={0}
-            angle={data.length > 4 ? -35 : 0}
-            textAnchor={data.length > 4 ? "end" : "middle"}
-            height={data.length > 4 ? 80 : 50}
+            angle={angle}
+            textAnchor={angle < 0 ? 'end' : 'middle'}
+            height={height}
           />
           <YAxis tick={{ fontSize: 12 }} />
           <Tooltip
@@ -155,7 +167,7 @@ const renderChart = (data, chartType) => {
             dataKey="value"
             fill={CHART_COLORS[1]}
             radius={[6, 6, 4, 4]}
-            barSize={Math.max(40, Math.min(100, Math.floor(600 / Math.max(1, data.length))))}
+            barSize={Math.max(30, Math.min(100, Math.floor(600 / Math.max(1, count))))}
           >
             <LabelList dataKey="value" content={renderBarLabel} />
           </Bar>
